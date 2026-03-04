@@ -14,11 +14,19 @@ const linkClass =
 const activeLinkClass =
   'font-ui font-semibold uppercase text-sm tracking-[0.2em] text-charcoal transition-colors'
 
-export default function Navbar() {
+interface NavbarProps {
+  hidden?: boolean
+}
+
+export default function Navbar({ hidden = false }: NavbarProps) {
   const [menuOpen, setMenuOpen] = useState(false)
 
   return (
-    <nav className="fixed top-0 inset-x-0 z-50 bg-cream border-b border-charcoal/8">
+    <nav
+      className={`fixed top-0 inset-x-0 z-50 bg-cream border-b border-charcoal/8 transition-transform duration-500 ${
+        hidden ? '-translate-y-full' : 'translate-y-0'
+      }`}
+    >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
         {/* Logo */}
         <Link to="/" className="shrink-0">

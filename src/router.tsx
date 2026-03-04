@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom'
 import Layout from './components/layout/Layout'
+import HomePage from './pages/HomePage'
 
 const Placeholder = () => null
 
@@ -7,7 +8,7 @@ export const router = createBrowserRouter([
   {
     element: <Layout />,
     children: [
-      { path: '/', element: <Placeholder /> },
+      { path: '/', element: <HomePage /> },
       { path: '/articles/:slug', element: <Placeholder /> },
       { path: '/newsletter', element: <Placeholder /> },
       { path: '/newsletter/:slug', element: <Placeholder /> },
