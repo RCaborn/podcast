@@ -1,73 +1,59 @@
-# React + TypeScript + Vite
+# Counter Culture
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Counter Culture is a community platform for independent food retailers — delis, butchers, cheesemongers, and farm shops. It features editorial articles, a weekly newsletter, and community discussion forums, all wrapped in a distinctive brand identity built around sharp corners, ochre accents, and serif typography.
 
-Currently, two official plugins are available:
+## Setup
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+git clone <repo-url>
+cd podcast
+npm install
+cp .env.example .env
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Open `.env` and add your Supabase project URL and anon key:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+VITE_SUPABASE_URL=your-project-url
+VITE_SUPABASE_ANON_KEY=your-anon-key
+```
+
+## Database
+
+Run the schema migration and seed data against your Supabase project:
+
+1. Go to your Supabase dashboard → SQL Editor
+2. Run `supabase/migrations/001_initial_schema.sql` to create tables and RLS policies
+3. Run `supabase/seed.sql` to populate sample articles, threads, and user profiles
+
+Or via the Supabase CLI:
+
+```bash
+supabase db push
+supabase db seed
+```
+
+## Development
+
+```bash
+npm run dev
+```
+
+Opens the Vite dev server at `http://localhost:5173`.
+
+## Build
+
+```bash
+npm run build
+npm run preview
+```
+
+## Tech Stack
+
+- **React 19** with TypeScript
+- **Vite 7** for bundling and dev server
+- **Tailwind CSS v4** for styling
+- **React Router v6** for client-side routing
+- **Supabase** for auth, database, and real-time
+- **react-markdown** for rendering article content
+- **Vercel** for deployment (SPA rewrite via `vercel.json`)
