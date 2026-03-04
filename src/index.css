@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ochre-50: #fdf8ef;
+  --color-ochre-100: #faecd5;
+  --color-ochre-200: #f4d5aa;
+  --color-ochre-300: #edb974;
+  --color-ochre-400: #e49a42;
+  --color-ochre-500: #dc8226;
+  --color-ochre-600: #c8841d;
+  --color-ochre-700: #9a5118;
+  --color-ochre-800: #7c411b;
+  --color-ochre-900: #653619;
+  --color-ochre-950: #391b0a;
+
+  --color-forest-50: #f0f7f4;
+  --color-forest-100: #dbece3;
+  --color-forest-200: #bad8ca;
+  --color-forest-300: #8dbdaa;
+  --color-forest-400: #5f9d86;
+  --color-forest-500: #3f816b;
+  --color-forest-600: #2f6755;
+  --color-forest-700: #275345;
+  --color-forest-800: #1b4332;
+  --color-forest-900: #1a3a2e;
+  --color-forest-950: #0d201a;
+
+  --color-cream: #faf7f2;
+  --color-sand: #e8dfd0;
+  --color-charcoal: #1a1a1a;
+
+  --font-display: "Playfair Display", serif;
+  --font-body: "Barlow", sans-serif;
+  --font-ui: "Barlow Condensed", sans-serif;
+}
+
+body {
+  font-family: var(--font-body);
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--color-cream);
+  color: var(--color-charcoal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
