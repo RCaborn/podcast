@@ -5,6 +5,8 @@ import ArticlePage from './pages/ArticlePage'
 import NewsletterPage from './pages/NewsletterPage'
 import CommunityPage from './pages/CommunityPage'
 import ThreadPage from './pages/ThreadPage'
+import JoinPage from './pages/JoinPage'
+import LoginPage from './pages/LoginPage'
 
 const Placeholder = () => null
 
@@ -18,8 +20,8 @@ export const router = createBrowserRouter([
       { path: '/newsletter/:slug', element: <ArticlePage /> },
       { path: '/community', element: <CommunityPage /> },
       { path: '/community/:threadId', element: <ThreadPage /> },
-      { path: '/join', element: <Placeholder /> },
-      { path: '/login', element: <Placeholder /> },
+      { path: '/join', element: <JoinPage /> },
+      { path: '/login', element: <LoginPage /> },
       { path: '/profile/:userId', element: <Placeholder /> },
     ],
   },

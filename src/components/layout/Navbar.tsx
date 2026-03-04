@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import Logo from '../ui/Logo'
+import Avatar from '../ui/Avatar'
+import { useAuth } from '../../context/AuthContext'
 
 const navLinks = [
   { to: '/', label: 'Home' },
@@ -14,12 +16,21 @@ const linkClass =
 const activeLinkClass =
   'font-ui font-semibold uppercase text-sm tracking-[0.2em] text-charcoal transition-colors'
 
+function mapAvatarColor(c: string | null): 'ochre' | 'forest' | 'charcoal' {
+  if (c === 'ochre') return 'ochre'
+  if (c === 'forest' || c === 'sage') return 'forest'
+  return 'charcoal'
+}
+
 interface NavbarProps {
   hidden?: boolean
 }
 
 export default function Navbar({ hidden = false }: NavbarProps) {
   const [menuOpen, setMenuOpen] = useState(false)
+  const { user, profile, loading } = useAuth()
+
+  const isLoggedIn = !loading && !!user
 
   return (
     <nav
@@ -46,13 +57,33 @@ export default function Navbar({ hidden = false }: NavbarProps) {
           ))}
         </div>
 
-        {/* Desktop JOIN button */}
-        <Link
-          to="/join"
-          className="hidden md:inline-flex items-center justify-center font-ui font-bold uppercase text-sm tracking-[0.2em] bg-ochre-600 text-charcoal px-5 py-2 hover:bg-ochre-500 transition-colors"
-        >
-          Join
-        </Link>
+        {/* Desktop auth area */}
+        <div className="hidden md:flex items-center gap-4">
+          {isLoggedIn ? (
+            <>
+              <Link
+                to={`/profile/${user.id}`}
+                className="font-ui font-semibold uppercase text-xs tracking-[0.2em] text-charcoal/70 hover:text-charcoal transition-colors"
+              >
+                My Profile
+              </Link>
+              <Link to={`/profile/${user.id}`}>
+                <Avatar
+                  initials={profile?.avatar_initials ?? '??'}
+                  color={mapAvatarColor(profile?.avatar_colour ?? null)}
+                  size="sm"
+                />
+              </Link>
+            </>
+          ) : (
+            <Link
+              to="/join"
+              className="inline-flex items-center justify-center font-ui font-bold uppercase text-sm tracking-[0.2em] bg-ochre-600 text-charcoal px-5 py-2 hover:bg-ochre-500 transition-colors"
+            >
+              Join
+            </Link>
+          )}
+        </div>
 
         {/* Mobile hamburger */}
         <button
@@ -106,13 +137,31 @@ export default function Navbar({ hidden = false }: NavbarProps) {
               {link.label}
             </NavLink>
           ))}
-          <Link
-            to="/join"
-            onClick={() => setMenuOpen(false)}
-            className="inline-flex items-center justify-center font-ui font-bold uppercase text-sm tracking-[0.2em] bg-ochre-600 text-charcoal px-5 py-3 hover:bg-ochre-500 transition-colors mt-2"
-          >
-            Join
-          </Link>
+
+          {isLoggedIn ? (
+            <Link
+              to={`/profile/${user.id}`}
+              onClick={() => setMenuOpen(false)}
+              className="flex items-center gap-3 mt-2"
+            >
+              <Avatar
+                initials={profile?.avatar_initials ?? '??'}
+                color={mapAvatarColor(profile?.avatar_colour ?? null)}
+                size="sm"
+              />
+              <span className="font-ui font-semibold uppercase text-xs tracking-[0.2em] text-charcoal/70">
+                My Profile
+              </span>
+            </Link>
+          ) : (
+            <Link
+              to="/join"
+              onClick={() => setMenuOpen(false)}
+              className="inline-flex items-center justify-center font-ui font-bold uppercase text-sm tracking-[0.2em] bg-ochre-600 text-charcoal px-5 py-3 hover:bg-ochre-500 transition-colors mt-2"
+            >
+              Join
+            </Link>
+          )}
         </div>
       </div>
     </nav>

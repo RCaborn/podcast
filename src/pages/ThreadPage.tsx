@@ -1,7 +1,12 @@
+import { useState, type FormEvent } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useThread } from '../hooks/useThreads'
+import { useAuth } from '../context/AuthContext'
+import { supabase } from '../lib/supabase'
 import Tag from '../components/ui/Tag'
 import Avatar from '../components/ui/Avatar'
+import Button from '../components/ui/Button'
+import type { Profile, Reply } from '../types/database'
 
 /* ------------------------------------------------------------------ */
 /*  Helpers                                                            */
@@ -41,6 +46,12 @@ function timeAgo(dateStr: string): string {
 export default function ThreadPage() {
   const { threadId } = useParams<{ threadId: string }>()
   const { thread, loading, error } = useThread(threadId)
+  const { user, profile } = useAuth()
+
+  const [replyContent, setReplyContent] = useState('')
+  const [posting, setPosting] = useState(false)
+  const [replyError, setReplyError] = useState<string | null>(null)
+  const [optimisticReplies, setOptimisticReplies] = useState<(Reply & { author: Profile })[]>([])
 
   if (loading) {
     return (
@@ -64,6 +75,40 @@ export default function ThreadPage() {
   const author = thread.author
   const authorName = author?.full_name ?? 'Anonymous'
   const shopName = author?.shop_name
+
+  const allReplies = [...thread.replies, ...optimisticReplies]
+
+  async function handleReply(e: FormEvent) {
+    e.preventDefault()
+    if (!user || !profile || !replyContent.trim()) return
+
+    setPosting(true)
+    setReplyError(null)
+
+    const { data, error: err } = await supabase
+      .from('replies')
+      .insert({
+        thread_id: threadId,
+        author_id: user.id,
+        content: replyContent.trim(),
+      })
+      .select('*')
+      .single()
+
+    setPosting(false)
+
+    if (err) {
+      setReplyError(err.message)
+      return
+    }
+
+    // Optimistically add the reply
+    setOptimisticReplies((prev) => [
+      ...prev,
+      { ...(data as Reply), author: profile },
+    ])
+    setReplyContent('')
+  }
 
   return (
     <section className="py-16 sm:py-24">
@@ -106,9 +151,9 @@ export default function ThreadPage() {
         <div className="w-full h-[2px] bg-ochre-600" />
 
         {/* Replies */}
-        {thread.replies.length > 0 ? (
+        {allReplies.length > 0 ? (
           <div className="mt-8 space-y-8">
-            {thread.replies.map((reply) => {
+            {allReplies.map((reply) => {
               const rAuthor = reply.author
               const rName = rAuthor?.full_name ?? 'Anonymous'
               const rShop = rAuthor?.shop_name
@@ -139,28 +184,48 @@ export default function ThreadPage() {
           <p className="font-body text-charcoal/50 mt-8">No replies yet. Be the first to respond.</p>
         )}
 
-        {/* Reply form — disabled for logged-out users */}
+        {/* Reply form */}
         <div className="mt-12 pt-8 border-t border-sand">
           <h3 className="font-ui text-xs font-semibold uppercase tracking-wider text-charcoal/50 mb-4">
             Reply
           </h3>
-          <textarea
-            disabled
-            rows={4}
-            placeholder="Join the community to reply"
-            className="w-full font-body text-sm p-4 border border-charcoal/20 bg-cream text-charcoal placeholder:text-charcoal/30 resize-y focus:border-ochre-600 focus:ring-1 focus:ring-ochre-600 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
-          />
-          <div className="flex items-center gap-4 mt-3">
-            <button
-              disabled
-              className="font-ui font-bold uppercase text-sm tracking-[0.2em] bg-forest-800 text-cream px-6 py-3 opacity-50 cursor-not-allowed"
-            >
-              Post Reply
-            </button>
-            <p className="font-ui text-[11px] uppercase tracking-wider text-charcoal/40">
-              Join the community to reply
-            </p>
-          </div>
+
+          {user ? (
+            <form onSubmit={handleReply}>
+              <textarea
+                rows={4}
+                value={replyContent}
+                onChange={(e) => setReplyContent(e.target.value)}
+                placeholder="Share your thoughts…"
+                className="w-full font-body text-sm p-4 border border-charcoal/20 bg-cream text-charcoal placeholder:text-charcoal/30 resize-y focus:border-ochre-600 focus:ring-1 focus:ring-ochre-600 focus:outline-none"
+              />
+              {replyError && (
+                <p className="font-body text-sm text-red-600 mt-2">{replyError}</p>
+              )}
+              <div className="mt-3">
+                <Button type="submit" disabled={posting || !replyContent.trim()}>
+                  {posting ? 'Posting…' : 'Post Reply'}
+                </Button>
+              </div>
+            </form>
+          ) : (
+            <div>
+              <textarea
+                disabled
+                rows={4}
+                placeholder="Join the community to reply"
+                className="w-full font-body text-sm p-4 border border-charcoal/20 bg-cream text-charcoal placeholder:text-charcoal/30 resize-y disabled:opacity-50 disabled:cursor-not-allowed"
+              />
+              <div className="flex items-center gap-4 mt-3">
+                <Link
+                  to="/join"
+                  className="inline-flex items-center justify-center font-ui font-bold uppercase text-sm tracking-[0.2em] bg-forest-800 text-cream px-6 py-3 hover:bg-forest-700 transition-colors"
+                >
+                  Join the community to reply
+                </Link>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </section>
