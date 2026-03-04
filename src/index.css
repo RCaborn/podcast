@@ -153,3 +153,27 @@ body {
   margin-bottom: 0.5em;
   line-height: 1.7;
 }
+
+/* Skeleton loading pulse */
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.7; }
+}
+.skeleton {
+  background-color: var(--color-sand);
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+/* Override default focus rings globally — use ochre */
+*:focus-visible {
+  outline: 2px solid var(--color-ochre-600);
+  outline-offset: 2px;
+}
+
+/* Card hover scale */
+.card-hover {
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+.card-hover:hover {
+  transform: scale(1.02);
+}

@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useThreads } from '../hooks/useThreads'
 import { useAuth } from '../context/AuthContext'
+import { usePageTitle } from '../hooks/usePageTitle'
 import { supabase } from '../lib/supabase'
 import Tag from '../components/ui/Tag'
 import Avatar from '../components/ui/Avatar'
@@ -56,7 +57,7 @@ function ThreadCard({ thread: t }: { thread: ThreadWithMeta }) {
   return (
     <Link
       to={`/community/${t.id}`}
-      className="block bg-cream border border-sand p-6 sm:p-8 hover:shadow-md transition-shadow"
+      className="block bg-cream border border-sand p-5 sm:p-8 card-hover hover:shadow-md"
     >
       <Tag variant="outlined">{categoryLabels[t.category] ?? t.category}</Tag>
 
@@ -188,6 +189,8 @@ function NewThreadForm({ onClose }: { onClose: () => void }) {
 /* ------------------------------------------------------------------ */
 
 export default function CommunityPage() {
+  usePageTitle('The Counter')
+
   const { threads, loading } = useThreads()
   const { user } = useAuth()
   const [active, setActive] = useState<Category>('all')
@@ -247,7 +250,19 @@ export default function CommunityPage() {
       {/* Thread list */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {loading ? (
-          <p className="font-ui text-sm uppercase tracking-wider text-charcoal/40">Loading…</p>
+          <div className="grid grid-cols-1 gap-4">
+            {[0, 1, 2].map((i) => (
+              <div key={i} className="p-5 sm:p-8 bg-cream border border-sand">
+                <div className="skeleton h-5 w-16" />
+                <div className="skeleton h-6 w-3/4 mt-4" />
+                <div className="skeleton h-3 w-32 mt-3" />
+                <div className="flex items-center gap-3 mt-4">
+                  <div className="skeleton w-8 h-8 rounded-full" />
+                  <div className="skeleton h-3 w-36" />
+                </div>
+              </div>
+            ))}
+          </div>
         ) : filtered.length === 0 ? (
           <p className="font-body text-charcoal/60">No threads yet. Check back soon.</p>
         ) : (

@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useThread } from '../hooks/useThreads'
 import { useAuth } from '../context/AuthContext'
+import { usePageTitle } from '../hooks/usePageTitle'
 import { supabase } from '../lib/supabase'
 import Tag from '../components/ui/Tag'
 import Avatar from '../components/ui/Avatar'
@@ -53,11 +54,35 @@ export default function ThreadPage() {
   const [replyError, setReplyError] = useState<string | null>(null)
   const [optimisticReplies, setOptimisticReplies] = useState<(Reply & { author: Profile })[]>([])
 
+  usePageTitle(thread?.title ?? 'Thread')
+
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <p className="font-ui text-sm uppercase tracking-wider text-charcoal/40">Loading…</p>
-      </div>
+      <section className="py-16 sm:py-24">
+        <div className="mx-auto max-w-[720px] px-4 sm:px-6">
+          <div className="skeleton h-4 w-32 mb-8" />
+          <div className="skeleton h-5 w-20" />
+          <div className="skeleton h-8 w-full mt-5" />
+          <div className="skeleton h-8 w-2/3 mt-2" />
+          <div className="flex items-center gap-3 mt-6">
+            <div className="skeleton w-10 h-10 rounded-full" />
+            <div className="skeleton h-3 w-40" />
+          </div>
+          <div className="w-full h-[2px] bg-sand mt-10" />
+          <div className="mt-8 space-y-8">
+            {[0, 1].map((i) => (
+              <div key={i} className="flex gap-4">
+                <div className="skeleton w-8 h-8 rounded-full shrink-0" />
+                <div className="flex-1">
+                  <div className="skeleton h-3 w-36" />
+                  <div className="skeleton h-4 w-full mt-2" />
+                  <div className="skeleton h-4 w-3/4 mt-1" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     )
   }
 

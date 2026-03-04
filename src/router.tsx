@@ -7,6 +7,7 @@ import CommunityPage from './pages/CommunityPage'
 import ThreadPage from './pages/ThreadPage'
 import JoinPage from './pages/JoinPage'
 import LoginPage from './pages/LoginPage'
+import NotFoundPage from './pages/NotFoundPage'
 
 const Placeholder = () => null
 
@@ -23,6 +24,7 @@ export const router = createBrowserRouter([
       { path: '/join', element: <JoinPage /> },
       { path: '/login', element: <LoginPage /> },
       { path: '/profile/:userId', element: <Placeholder /> },
+      { path: '*', element: <NotFoundPage /> },
     ],
   },
 ])

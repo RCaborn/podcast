@@ -1,6 +1,7 @@
 import { useParams, Link } from 'react-router-dom'
 import Markdown from 'react-markdown'
 import { useArticle, useArticles } from '../hooks/useArticles'
+import { usePageTitle } from '../hooks/usePageTitle'
 import Tag from '../components/ui/Tag'
 import type { Article } from '../types/database'
 
@@ -48,7 +49,7 @@ function RelatedCard({ article: a }: { article: Article }) {
   return (
     <Link
       to={a.tag === 'Newsletter' ? `/newsletter/${a.slug}` : `/articles/${a.slug}`}
-      className={`block p-6 transition-shadow hover:shadow-lg ${s.card}`}
+      className={`block p-6 card-hover hover:shadow-lg ${s.card}`}
       style={isOchre ? { background: 'linear-gradient(135deg, #e8973a 0%, #d4603a 100%)' } : undefined}
     >
       {isDark ? (
@@ -80,11 +81,25 @@ export default function ArticlePage() {
   const { article, loading, error } = useArticle(slug)
   const { articles } = useArticles()
 
+  usePageTitle(article?.title)
+
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <p className="font-ui text-sm uppercase tracking-wider text-charcoal/40">Loading…</p>
-      </div>
+      <article className="py-16 sm:py-24">
+        <div className="mx-auto max-w-[680px] px-4 sm:px-6">
+          <div className="skeleton h-5 w-24 mb-6" />
+          <div className="skeleton h-10 w-full" />
+          <div className="skeleton h-10 w-3/4 mt-2" />
+          <div className="skeleton h-4 w-48 mt-4" />
+          <div className="w-16 h-[2px] bg-sand mt-6" />
+          <div className="mt-10 space-y-4">
+            {[0, 1, 2, 3, 4].map((i) => (
+              <div key={i} className="skeleton h-4 w-full" />
+            ))}
+            <div className="skeleton h-4 w-2/3" />
+          </div>
+        </div>
+      </article>
     )
   }
 

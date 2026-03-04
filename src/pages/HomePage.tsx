@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import Logo from '../components/ui/Logo'
 import Eyebrow from '../components/ui/Eyebrow'
@@ -5,6 +6,7 @@ import Tag from '../components/ui/Tag'
 import Avatar from '../components/ui/Avatar'
 import { useArticles } from '../hooks/useArticles'
 import { useThreads } from '../hooks/useThreads'
+import { usePageTitle } from '../hooks/usePageTitle'
 import type { Article, ThreadWithMeta } from '../types/database'
 
 /* ------------------------------------------------------------------ */
@@ -42,6 +44,36 @@ const cardStyles: Record<string, {
     meta: 'text-charcoal/40',
     tagClass: '',
   },
+}
+
+/* ------------------------------------------------------------------ */
+/*  Skeleton loaders                                                   */
+/* ------------------------------------------------------------------ */
+
+function BannerSkeleton() {
+  return (
+    <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
+      <div className="skeleton h-64 sm:h-72" />
+    </section>
+  )
+}
+
+function EditorialSkeleton() {
+  return (
+    <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-16">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {[0, 1, 2, 3].map((i) => (
+          <div key={i} className="p-6 sm:p-8 bg-cream border border-sand">
+            <div className="skeleton h-5 w-20" />
+            <div className="skeleton h-6 w-3/4 mt-4" />
+            <div className="skeleton h-4 w-full mt-3" />
+            <div className="skeleton h-4 w-2/3 mt-1" />
+            <div className="skeleton h-3 w-1/3 mt-4" />
+          </div>
+        ))}
+      </div>
+    </section>
+  )
 }
 
 /* ------------------------------------------------------------------ */
@@ -143,7 +175,7 @@ function EditorialGrid({ articles }: { articles: Article[] }) {
             <Link
               key={a.id}
               to={a.tag === 'Newsletter' ? `/newsletter/${a.slug}` : `/articles/${a.slug}`}
-              className={`block p-8 transition-shadow hover:shadow-lg ${s.card}`}
+              className={`block p-6 sm:p-8 card-hover hover:shadow-lg ${s.card}`}
               style={isOchre ? { background: 'linear-gradient(135deg, #e8973a 0%, #d4603a 100%)' } : undefined}
             >
               {isDark ? (
@@ -194,7 +226,7 @@ function CommunityPreview({ thread }: { thread: ThreadWithMeta | null }) {
 
   return (
     <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
-      <div className="bg-cream border border-sand p-8 sm:p-10">
+      <div className="bg-cream border border-sand p-6 sm:p-10">
         <Tag variant="outlined">
           Community &middot; {categoryLabels[thread.category] ?? thread.category}
         </Tag>
@@ -292,6 +324,20 @@ function Manifesto() {
 /* ------------------------------------------------------------------ */
 
 export default function HomePage() {
+  usePageTitle()
+
+  // Set meta description
+  useEffect(() => {
+    let meta = document.querySelector('meta[name="description"]') as HTMLMetaElement | null
+    if (!meta) {
+      meta = document.createElement('meta')
+      meta.name = 'description'
+      document.head.appendChild(meta)
+    }
+    meta.content = 'Counter Culture — the home of independent food retail. Articles, newsletters, and community for independents who give a damn.'
+    return () => { if (meta) meta.content = '' }
+  }, [])
+
   const { articles, loading: articlesLoading } = useArticles()
   const { threads, loading: threadsLoading } = useThreads()
 
@@ -310,9 +356,10 @@ export default function HomePage() {
     <>
       <Hero />
       {articlesLoading ? (
-        <div className="flex items-center justify-center py-24">
-          <p className="font-ui text-sm uppercase tracking-wider text-charcoal/40">Loading…</p>
-        </div>
+        <>
+          <BannerSkeleton />
+          <EditorialSkeleton />
+        </>
       ) : (
         <>
           {latestNewsletter && <NewsletterBanner article={latestNewsletter} />}

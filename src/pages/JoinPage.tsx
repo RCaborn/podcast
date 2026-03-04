@@ -1,12 +1,15 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { usePageTitle } from '../hooks/usePageTitle'
 import Button from '../components/ui/Button'
 
 const inputClass =
   'w-full font-body text-sm p-3 border border-charcoal/20 bg-cream text-charcoal placeholder:text-charcoal/30 focus:border-ochre-600 focus:ring-1 focus:ring-ochre-600 focus:outline-none'
 
 export default function JoinPage() {
+  usePageTitle('Join')
+
   const { signUp } = useAuth()
   const navigate = useNavigate()
 

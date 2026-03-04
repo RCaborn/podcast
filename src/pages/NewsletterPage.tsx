@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useArticles } from '../hooks/useArticles'
+import { usePageTitle } from '../hooks/usePageTitle'
 import type { Article } from '../types/database'
 
 /* ------------------------------------------------------------------ */
@@ -49,7 +50,7 @@ function IssueCard({ article: a }: { article: Article }) {
   return (
     <Link
       to={`/newsletter/${a.slug}`}
-      className={`block p-8 sm:p-10 transition-shadow hover:shadow-lg ${s.card}`}
+      className={`block p-6 sm:p-10 card-hover hover:shadow-lg ${s.card}`}
       style={isOchre ? { background: 'linear-gradient(135deg, #e8973a 0%, #d4603a 100%)' } : undefined}
     >
       {a.issue_number != null && (
@@ -75,6 +76,8 @@ function IssueCard({ article: a }: { article: Article }) {
 /* ------------------------------------------------------------------ */
 
 export default function NewsletterPage() {
+  usePageTitle('The Weekly')
+
   const { articles, loading } = useArticles()
 
   const newsletters = articles
@@ -95,7 +98,15 @@ export default function NewsletterPage() {
       {/* Issue list */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {loading ? (
-          <p className="font-ui text-sm uppercase tracking-wider text-charcoal/40">Loading…</p>
+          <div className="grid grid-cols-1 gap-6">
+            {[0, 1, 2].map((i) => (
+              <div key={i} className="p-6 sm:p-10 bg-cream border border-sand">
+                <div className="skeleton h-4 w-20" />
+                <div className="skeleton h-7 w-3/4 mt-3" />
+                <div className="skeleton h-3 w-40 mt-4" />
+              </div>
+            ))}
+          </div>
         ) : newsletters.length === 0 ? (
           <p className="font-body text-charcoal/60">No issues yet. Check back soon.</p>
         ) : (
