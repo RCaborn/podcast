@@ -3,6 +3,8 @@ import Layout from './components/layout/Layout'
 import HomePage from './pages/HomePage'
 import ArticlePage from './pages/ArticlePage'
 import NewsletterPage from './pages/NewsletterPage'
+import CommunityPage from './pages/CommunityPage'
+import ThreadPage from './pages/ThreadPage'
 
 const Placeholder = () => null
 
@@ -14,8 +16,8 @@ export const router = createBrowserRouter([
       { path: '/articles/:slug', element: <ArticlePage /> },
       { path: '/newsletter', element: <NewsletterPage /> },
       { path: '/newsletter/:slug', element: <ArticlePage /> },
-      { path: '/community', element: <Placeholder /> },
-      { path: '/community/:threadId', element: <Placeholder /> },
+      { path: '/community', element: <CommunityPage /> },
+      { path: '/community/:threadId', element: <ThreadPage /> },
       { path: '/join', element: <Placeholder /> },
       { path: '/login', element: <Placeholder /> },
       { path: '/profile/:userId', element: <Placeholder /> },

@@ -4,7 +4,8 @@ import Eyebrow from '../components/ui/Eyebrow'
 import Tag from '../components/ui/Tag'
 import Avatar from '../components/ui/Avatar'
 import { useArticles } from '../hooks/useArticles'
-import type { Article } from '../types/database'
+import { useThreads } from '../hooks/useThreads'
+import type { Article, ThreadWithMeta } from '../types/database'
 
 /* ------------------------------------------------------------------ */
 /*  Card style map for editorial grid                                  */
@@ -171,51 +172,59 @@ function EditorialGrid({ articles }: { articles: Article[] }) {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Community Preview                                                  */
+/*  Community Preview (data-driven)                                    */
 /* ------------------------------------------------------------------ */
 
-function CommunityPreview() {
+const categoryLabels: Record<string, string> = {
+  delis: 'Delis',
+  butchers: 'Butchers',
+  cheesemongers: 'Cheesemongers',
+  'farm-shops': 'Farm Shops',
+  general: 'General',
+}
+
+function mapAvatarColor(c: string | null): 'ochre' | 'forest' | 'charcoal' {
+  if (c === 'ochre') return 'ochre'
+  if (c === 'forest' || c === 'sage') return 'forest'
+  return 'charcoal'
+}
+
+function CommunityPreview({ thread }: { thread: ThreadWithMeta | null }) {
+  if (!thread) return null
+
   return (
     <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
       <div className="bg-cream border border-sand p-8 sm:p-10">
-        <Tag variant="outlined">Community &middot; Delis</Tag>
+        <Tag variant="outlined">
+          Community &middot; {categoryLabels[thread.category] ?? thread.category}
+        </Tag>
 
         <p className="font-display italic text-xl mt-6 leading-snug max-w-lg">
-          &ldquo;What&rsquo;s the one product you&rsquo;d never drop from your
-          counter, no matter what the margin?&rdquo;
+          &ldquo;{thread.title}&rdquo;
         </p>
 
+        {/* Show first 2 replies if we have a ThreadDetail, otherwise show author */}
         <div className="mt-8 space-y-6">
-          <div className="flex gap-4">
-            <Avatar initials="RC" color="ochre" size="sm" />
-            <div>
-              <p className="font-ui text-[11px] font-semibold uppercase tracking-wider text-charcoal/50">
-                Rosa Capaldi &middot; Rosa&rsquo;s Deli, Edinburgh
-              </p>
-              <p className="font-body text-[13px] text-charcoal/70 mt-1 leading-relaxed">
-                Our house nduja. Costs me a fortune to make but people drive
-                across the city for it. That&rsquo;s the point.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex gap-4">
-            <Avatar initials="MW" color="forest" size="sm" />
-            <div>
-              <p className="font-ui text-[11px] font-semibold uppercase tracking-wider text-charcoal/50">
-                Marcus Webb &middot; The Corner Larder, Bristol
-              </p>
-              <p className="font-body text-[13px] text-charcoal/70 mt-1 leading-relaxed">
-                Proper sourdough from a local baker. We sell it at cost.
-                Everything else on the counter sells because of it.
-              </p>
-            </div>
+          <div className="flex items-center gap-3">
+            <Avatar
+              initials={thread.author?.avatar_initials ?? '??'}
+              color={mapAvatarColor(thread.author?.avatar_colour ?? null)}
+              size="sm"
+            />
+            <p className="font-ui text-[11px] font-semibold uppercase tracking-wider text-charcoal/50">
+              {thread.author?.full_name ?? 'Anonymous'}
+              {thread.author?.shop_name && <> &middot; {thread.author.shop_name}</>}
+            </p>
           </div>
         </div>
 
+        <p className="font-ui text-[11px] uppercase tracking-wider text-charcoal/40 mt-4">
+          {thread.reply_count} {thread.reply_count === 1 ? 'reply' : 'replies'}
+        </p>
+
         <Link
-          to="/community"
-          className="inline-block font-ui text-sm font-semibold uppercase tracking-[0.15em] text-ochre-600 mt-8 hover:text-ochre-700 transition-colors"
+          to={`/community/${thread.id}`}
+          className="inline-block font-ui text-sm font-semibold uppercase tracking-[0.15em] text-ochre-600 mt-6 hover:text-ochre-700 transition-colors"
         >
           Join the conversation &rarr;
         </Link>
@@ -283,7 +292,8 @@ function Manifesto() {
 /* ------------------------------------------------------------------ */
 
 export default function HomePage() {
-  const { articles, loading } = useArticles()
+  const { articles, loading: articlesLoading } = useArticles()
+  const { threads, loading: threadsLoading } = useThreads()
 
   // Latest newsletter for the banner
   const latestNewsletter = articles.find((a) => a.tag === 'Newsletter')
@@ -293,10 +303,13 @@ export default function HomePage() {
     ? articles.filter((a) => a.id !== latestNewsletter.id).slice(0, 6)
     : articles.slice(0, 6)
 
+  // Most recent thread for community preview
+  const latestThread = threads.length > 0 ? threads[0] : null
+
   return (
     <>
       <Hero />
-      {loading ? (
+      {articlesLoading ? (
         <div className="flex items-center justify-center py-24">
           <p className="font-ui text-sm uppercase tracking-wider text-charcoal/40">Loading…</p>
         </div>
@@ -306,7 +319,7 @@ export default function HomePage() {
           {gridArticles.length > 0 && <EditorialGrid articles={gridArticles} />}
         </>
       )}
-      <CommunityPreview />
+      {!threadsLoading && <CommunityPreview thread={latestThread} />}
       <Manifesto />
     </>
   )
