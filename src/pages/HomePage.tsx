@@ -3,81 +3,16 @@ import Logo from '../components/ui/Logo'
 import Eyebrow from '../components/ui/Eyebrow'
 import Tag from '../components/ui/Tag'
 import Avatar from '../components/ui/Avatar'
+import { useArticles } from '../hooks/useArticles'
+import type { Article } from '../types/database'
 
 /* ------------------------------------------------------------------ */
-/*  Hardcoded data                                                     */
+/*  Card style map for editorial grid                                  */
 /* ------------------------------------------------------------------ */
 
-const articles = [
-  {
-    slug: 'the-perfect-counter',
-    tag: 'Opinion',
-    tagVariant: 'filled' as const,
-    headline: 'The Perfect Counter Is the One That Tells Your Story',
-    excerpt:
-      'Why the layout of your shop says more about your brand than any logo ever could.',
-    author: 'Elena Marchetti',
-    source: 'Counter Culture Weekly',
-    bg: 'forest' as const,
-  },
-  {
-    slug: 'sourdough-revival',
-    tag: 'Trends',
-    tagVariant: 'outlined' as const,
-    headline: "The Sourdough Revival Isn't About Bread",
-    excerpt:
-      "It's about a generation of shopkeepers choosing craft over convenience — and winning.",
-    author: 'James Hargreaves',
-    source: 'Issue 011',
-    bg: 'cream' as const,
-  },
-  {
-    slug: 'cheese-room-secrets',
-    tag: 'How-To',
-    tagVariant: 'filled' as const,
-    headline: 'What Your Cheese Room Is Trying to Tell You',
-    excerpt:
-      'Temperature, humidity, rotation — the small details that separate great fromagers from good ones.',
-    author: 'Anya Birch',
-    source: 'Counter Culture Weekly',
-    bg: 'white' as const,
-  },
-  {
-    slug: 'saturday-morning-economy',
-    tag: 'Economics',
-    tagVariant: 'outlined' as const,
-    headline: 'The Saturday Morning Economy',
-    excerpt:
-      'How farmers\u2019 markets became the unlikely engine of neighbourhood renewal.',
-    author: 'Tom Ainsley',
-    source: 'Issue 010',
-    bg: 'forest' as const,
-  },
-  {
-    slug: 'wine-merchants-new-playbook',
-    tag: 'Strategy',
-    tagVariant: 'filled' as const,
-    headline: "The Independent Wine Merchant's New Playbook",
-    excerpt:
-      'Forget competing on range. The smartest wine shops are competing on trust.',
-    author: 'Sofia Grant',
-    source: 'Counter Culture Weekly',
-    bg: 'cream' as const,
-  },
-  {
-    slug: 'lost-art-of-window-display',
-    tag: 'Design',
-    tagVariant: 'outlined' as const,
-    headline: 'The Lost Art of the Window Display',
-    excerpt:
-      'In an age of algorithms, your shop window is still your most powerful marketing tool.',
-    author: 'David Keane',
-    source: 'Issue 009',
-    bg: 'white' as const,
-  },
-]
-
-const cardStyles = {
+const cardStyles: Record<string, {
+  card: string; headline: string; excerpt: string; meta: string; tagClass: string
+}> = {
   forest: {
     card: 'bg-forest-800 text-cream',
     headline: 'text-cream',
@@ -85,15 +20,22 @@ const cardStyles = {
     meta: 'text-cream/40',
     tagClass: 'bg-ochre-400 text-forest-800',
   },
-  cream: {
-    card: 'bg-ochre-50 text-charcoal',
+  'ochre-gradient': {
+    card: 'text-cream',
+    headline: 'text-cream',
+    excerpt: 'text-cream/70',
+    meta: 'text-cream/50',
+    tagClass: 'bg-cream/20 text-cream',
+  },
+  light: {
+    card: 'bg-cream text-charcoal border border-sand',
     headline: 'text-charcoal',
     excerpt: 'text-charcoal/60',
     meta: 'text-charcoal/40',
     tagClass: '',
   },
-  white: {
-    card: 'bg-cream text-charcoal border border-sand',
+  cream: {
+    card: 'bg-ochre-50 text-charcoal',
     headline: 'text-charcoal',
     excerpt: 'text-charcoal/60',
     meta: 'text-charcoal/40',
@@ -114,7 +56,6 @@ function Hero() {
           'linear-gradient(160deg, #fffef9 0%, #f2ede3 50%, #e8f0e5 100%)',
       }}
     >
-      {/* Fade-up content */}
       <div className="animate-fade-up relative z-10 flex flex-col items-center text-center px-6">
         <Logo size="lg" />
         <p className="font-display italic text-charcoal/60 text-lg sm:text-xl mt-6">
@@ -125,7 +66,6 @@ function Hero() {
         </p>
       </div>
 
-      {/* Scroll indicator */}
       <div className="animate-scroll-pulse absolute bottom-10 flex flex-col items-center gap-2 z-10">
         <span className="font-ui text-[10px] font-semibold uppercase tracking-[0.3em] text-ochre-600">
           Scroll
@@ -137,20 +77,22 @@ function Hero() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Featured Newsletter Banner                                         */
+/*  Featured Newsletter Banner (data-driven)                           */
 /* ------------------------------------------------------------------ */
 
-function NewsletterBanner() {
+function NewsletterBanner({ article }: { article: Article }) {
+  const issueLabel = article.issue_number
+    ? `Counter Culture Weekly · Issue ${String(article.issue_number).padStart(3, '0')}`
+    : 'Counter Culture Weekly'
+
   return (
     <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
       <div
         className="relative overflow-hidden p-8 sm:p-12"
         style={{
-          background:
-            'linear-gradient(135deg, #e8973a 0%, #d4603a 100%)',
+          background: 'linear-gradient(135deg, #e8973a 0%, #d4603a 100%)',
         }}
       >
-        {/* Decorative CC watermark — hidden on mobile */}
         <span
           className="hidden md:block absolute right-10 top-1/2 -translate-y-1/2 font-display text-[180px] leading-none text-white/10 select-none pointer-events-none"
           aria-hidden="true"
@@ -160,19 +102,18 @@ function NewsletterBanner() {
 
         <div className="relative z-10 max-w-xl">
           <p className="font-ui text-xs font-semibold uppercase tracking-[0.15em] text-cream/75">
-            Counter Culture Weekly &middot; Issue 012
+            {issueLabel}
           </p>
           <h2 className="font-display font-bold text-cream text-2xl sm:text-3xl mt-4 max-w-[500px] leading-snug">
-            Why the best delis aren&rsquo;t thinking about competing with
-            supermarkets anymore
+            {article.title}
           </h2>
-          <p className="font-body text-sm text-cream/80 mt-4 max-w-md leading-relaxed">
-            This week we look at a new generation of deli owners who&rsquo;ve
-            stopped chasing volume and started building something the
-            multiples can&rsquo;t replicate: genuine community.
-          </p>
+          {article.excerpt && (
+            <p className="font-body text-sm text-cream/80 mt-4 max-w-md leading-relaxed">
+              {article.excerpt}
+            </p>
+          )}
           <Link
-            to="/newsletter/012"
+            to={`/newsletter/${article.slug}`}
             className="inline-flex items-center font-ui font-bold uppercase text-sm tracking-[0.2em] bg-cream text-charcoal px-6 py-3 mt-6 hover:bg-cream/90 transition-colors"
           >
             Read this week&rsquo;s issue &rarr;
@@ -184,38 +125,42 @@ function NewsletterBanner() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Editorial Grid                                                     */
+/*  Editorial Grid (data-driven)                                       */
 /* ------------------------------------------------------------------ */
 
-function EditorialGrid() {
+function EditorialGrid({ articles }: { articles: Article[] }) {
   return (
     <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-16">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {articles.map((a) => {
-          const s = cardStyles[a.bg]
+          const key = a.card_style ?? 'light'
+          const s = cardStyles[key] ?? cardStyles.light
+          const isOchre = key === 'ochre-gradient'
+          const isDark = key === 'forest' || isOchre
+
           return (
             <Link
-              key={a.slug}
-              to={`/articles/${a.slug}`}
+              key={a.id}
+              to={a.tag === 'Newsletter' ? `/newsletter/${a.slug}` : `/articles/${a.slug}`}
               className={`block p-8 transition-shadow hover:shadow-lg ${s.card}`}
+              style={isOchre ? { background: 'linear-gradient(135deg, #e8973a 0%, #d4603a 100%)' } : undefined}
             >
-              {a.bg === 'forest' ? (
+              {isDark ? (
                 <span className={`inline-block font-ui text-xs font-semibold uppercase tracking-wider px-3 py-1 ${s.tagClass}`}>
                   {a.tag}
                 </span>
               ) : (
-                <Tag variant={a.tagVariant}>{a.tag}</Tag>
+                <Tag variant="outlined">{a.tag}</Tag>
               )}
-              <h3
-                className={`font-display font-bold text-xl mt-4 leading-snug ${s.headline}`}
-              >
-                {a.headline}
+              <h3 className={`font-display font-bold text-xl mt-4 leading-snug ${s.headline}`}>
+                {a.title}
               </h3>
               <p className={`font-body text-[13px] mt-3 leading-relaxed ${s.excerpt}`}>
                 {a.excerpt}
               </p>
               <p className={`font-ui text-[11px] uppercase tracking-wider mt-4 ${s.meta}`}>
-                {a.author} &middot; {a.source}
+                {a.author_name}
+                {a.author_source ? ` · ${a.author_source}` : ''}
               </p>
             </Link>
           )
@@ -240,7 +185,6 @@ function CommunityPreview() {
           counter, no matter what the margin?&rdquo;
         </p>
 
-        {/* Reply previews */}
         <div className="mt-8 space-y-6">
           <div className="flex gap-4">
             <Avatar initials="RC" color="ochre" size="sm" />
@@ -292,7 +236,6 @@ function Manifesto() {
         background: 'linear-gradient(160deg, #f2ede3 0%, #e8f0e5 100%)',
       }}
     >
-      {/* Decorative open-quote */}
       <span
         className="absolute left-1/2 -translate-x-1/2 top-6 sm:top-12 font-display text-[280px] sm:text-[400px] leading-none text-charcoal/[0.04] select-none pointer-events-none"
         aria-hidden="true"
@@ -325,10 +268,8 @@ function Manifesto() {
           </p>
         </div>
 
-        {/* Ochre rule */}
         <div className="mx-auto w-[60px] h-[2px] bg-ochre-600 mt-10" />
 
-        {/* Sign-off */}
         <p className="font-display italic text-charcoal/60 mt-6 text-lg">
           Counter Culture
         </p>
@@ -342,11 +283,29 @@ function Manifesto() {
 /* ------------------------------------------------------------------ */
 
 export default function HomePage() {
+  const { articles, loading } = useArticles()
+
+  // Latest newsletter for the banner
+  const latestNewsletter = articles.find((a) => a.tag === 'Newsletter')
+
+  // Grid: all articles (excluding the featured newsletter) — up to 6
+  const gridArticles = latestNewsletter
+    ? articles.filter((a) => a.id !== latestNewsletter.id).slice(0, 6)
+    : articles.slice(0, 6)
+
   return (
     <>
       <Hero />
-      <NewsletterBanner />
-      <EditorialGrid />
+      {loading ? (
+        <div className="flex items-center justify-center py-24">
+          <p className="font-ui text-sm uppercase tracking-wider text-charcoal/40">Loading…</p>
+        </div>
+      ) : (
+        <>
+          {latestNewsletter && <NewsletterBanner article={latestNewsletter} />}
+          {gridArticles.length > 0 && <EditorialGrid articles={gridArticles} />}
+        </>
+      )}
       <CommunityPreview />
       <Manifesto />
     </>
