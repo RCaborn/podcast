@@ -484,6 +484,42 @@ insert into public.notices (author_id, type, title, body, location, contact_hint
   'Reply below or visit the shop'
 );
 
+-- ---------- admin setup ----------
+-- Set Rosa Capaldi as admin
+UPDATE public.profiles SET is_admin = true WHERE id = '11111111-1111-1111-1111-111111111111';
+
+-- Set all existing articles to published
+UPDATE public.articles SET status = 'published';
+
+-- Assign featured positions to articles for the homepage layout
+UPDATE public.articles SET featured_position = 'lead'
+  WHERE slug = 'best-delis-not-competing';
+
+UPDATE public.articles SET featured_position = 'image-feature-1',
+  image_url = 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80'
+  WHERE slug = 'stopped-stocking-everything';
+
+UPDATE public.articles SET featured_position = 'image-feature-2',
+  image_url = 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&q=80'
+  WHERE slug = 'supplier-north-talking-about';
+
+UPDATE public.articles SET featured_position = 'opinion-pullquote',
+  pullquote = 'It''s not about the product. It''s about the rhythm, the ritual, and the reason to return.'
+  WHERE slug = 'three-things-drive-footfall';
+
+UPDATE public.articles SET featured_position = 'aside'
+  WHERE slug = 'farm-shop-bubble';
+
+UPDATE public.articles SET featured_position = 'newsletter-strip'
+  WHERE slug = 'best-delis-not-competing';
+
+-- Assign featured thread positions
+UPDATE public.threads SET featured_thread_position = 'community-inline'
+  WHERE id = 'dddddddd-dddd-dddd-dddd-dddddddddddd';
+
+UPDATE public.threads SET featured_thread_position = 'community-strip'
+  WHERE id = 'cccccccc-cccc-cccc-cccc-cccccccccccc';
+
 -- ---------- thread reactions ----------
 
 insert into public.thread_reactions (thread_id, author_id, type) values

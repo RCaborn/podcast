@@ -11,6 +11,14 @@ import ProfilePage from './pages/ProfilePage'
 import DirectoryPage from './pages/DirectoryPage'
 import SubscribePage from './pages/SubscribePage'
 import NotFoundPage from './pages/NotFoundPage'
+import AdminGuard from './components/admin/AdminGuard'
+import AdminLayout from './components/admin/AdminLayout'
+import AdminDashboardPage from './pages/admin/AdminDashboardPage'
+import ArticlesAdminPage from './pages/admin/ArticlesAdminPage'
+import ArticleEditorPage from './pages/admin/ArticleEditorPage'
+import HomepageCurationPage from './pages/admin/HomepageCurationPage'
+import CommunityModerationPage from './pages/admin/CommunityModerationPage'
+import ThreadModerationPage from './pages/admin/ThreadModerationPage'
 
 export const router = createBrowserRouter([
   {
@@ -28,6 +36,23 @@ export const router = createBrowserRouter([
       { path: '/directory', element: <DirectoryPage /> },
       { path: '/subscribe', element: <SubscribePage /> },
       { path: '*', element: <NotFoundPage /> },
+    ],
+  },
+  {
+    element: <AdminGuard />,
+    children: [
+      {
+        element: <AdminLayout />,
+        children: [
+          { path: '/admin', element: <AdminDashboardPage /> },
+          { path: '/admin/articles', element: <ArticlesAdminPage /> },
+          { path: '/admin/articles/new', element: <ArticleEditorPage /> },
+          { path: '/admin/articles/:id/edit', element: <ArticleEditorPage /> },
+          { path: '/admin/homepage', element: <HomepageCurationPage /> },
+          { path: '/admin/community', element: <CommunityModerationPage /> },
+          { path: '/admin/community/:threadId', element: <ThreadModerationPage /> },
+        ],
+      },
     ],
   },
 ])

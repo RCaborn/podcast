@@ -17,6 +17,7 @@ export interface Profile {
   face_photo_url: string | null
   shop_photo_url: string | null
   shop_photo_caption: string | null
+  is_admin: boolean
   created_at: string
 }
 
@@ -34,6 +35,9 @@ export interface Article {
   issue_number: number | null
   image_url: string | null
   is_featured: boolean
+  featured_position: string | null
+  status: 'draft' | 'published' | 'archived'
+  pullquote: string | null
   published_at: string | null
   created_at: string
 }
@@ -46,6 +50,10 @@ export interface Thread {
   author_id: string
   is_weekly_prompt: boolean
   prompt_week: string | null
+  featured_thread_position: string | null
+  is_pinned: boolean
+  is_locked: boolean
+  is_hidden: boolean
   created_at: string
 }
 
@@ -54,6 +62,7 @@ export interface Reply {
   thread_id: string
   author_id: string
   content: string
+  is_hidden: boolean
   created_at: string
 }
 
