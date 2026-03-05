@@ -3,6 +3,7 @@ import { Link, NavLink } from 'react-router-dom'
 import Logo from '../ui/Logo'
 import Avatar from '../ui/Avatar'
 import { useAuth } from '../../context/AuthContext'
+import { mapAvatarColor } from '../../lib/avatarColor'
 
 const navLinks = [
   { to: '/', label: 'Home' },
@@ -16,17 +17,7 @@ const linkClass =
 const activeLinkClass =
   'font-ui font-semibold uppercase text-sm tracking-[0.2em] text-charcoal transition-colors'
 
-function mapAvatarColor(c: string | null): 'ochre' | 'forest' | 'charcoal' {
-  if (c === 'ochre') return 'ochre'
-  if (c === 'forest' || c === 'sage') return 'forest'
-  return 'charcoal'
-}
-
-interface NavbarProps {
-  hidden?: boolean
-}
-
-export default function Navbar({ hidden = false }: NavbarProps) {
+export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
   const { user, profile, loading } = useAuth()
 
@@ -34,9 +25,7 @@ export default function Navbar({ hidden = false }: NavbarProps) {
 
   return (
     <nav
-      className={`fixed top-0 inset-x-0 z-50 bg-cream border-b border-charcoal/8 transition-transform duration-500 ${
-        hidden ? '-translate-y-full' : 'translate-y-0'
-      }`}
+      className="fixed top-0 inset-x-0 z-50 bg-[rgba(250,248,244,0.9)] backdrop-blur-[16px] border-b border-stone"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
         {/* Logo */}
@@ -78,7 +67,7 @@ export default function Navbar({ hidden = false }: NavbarProps) {
           ) : (
             <Link
               to="/join"
-              className="inline-flex items-center justify-center font-ui font-bold uppercase text-sm tracking-[0.2em] bg-ochre-600 text-charcoal px-5 py-2 hover:bg-ochre-500 transition-colors"
+              className="inline-flex items-center justify-center font-ui font-bold uppercase text-sm tracking-[0.2em] bg-charcoal text-warm-white px-5 py-2 hover:bg-ink transition-colors"
             >
               Join
             </Link>
@@ -108,11 +97,11 @@ export default function Navbar({ hidden = false }: NavbarProps) {
 
       {/* Mobile slide-in menu */}
       <div
-        className={`fixed top-0 right-0 h-full w-72 bg-cream z-50 shadow-xl transform transition-transform duration-300 md:hidden ${
+        className={`fixed top-0 right-0 h-full w-72 bg-warm-white z-50 shadow-xl transform transition-transform duration-300 md:hidden ${
           menuOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
-        <div className="flex items-center justify-between p-4 border-b border-charcoal/8">
+        <div className="flex items-center justify-between p-4 border-b border-stone">
           <Logo size="sm" />
           <button
             type="button"
@@ -157,7 +146,7 @@ export default function Navbar({ hidden = false }: NavbarProps) {
             <Link
               to="/join"
               onClick={() => setMenuOpen(false)}
-              className="inline-flex items-center justify-center font-ui font-bold uppercase text-sm tracking-[0.2em] bg-ochre-600 text-charcoal px-5 py-3 hover:bg-ochre-500 transition-colors mt-2"
+              className="inline-flex items-center justify-center font-ui font-bold uppercase text-sm tracking-[0.2em] bg-charcoal text-warm-white px-5 py-3 hover:bg-ink transition-colors mt-2"
             >
               Join
             </Link>

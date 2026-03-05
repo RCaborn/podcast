@@ -5,7 +5,7 @@ import { usePageTitle } from '../hooks/usePageTitle'
 import Button from '../components/ui/Button'
 
 const inputClass =
-  'w-full font-body text-sm p-3 border border-charcoal/20 bg-cream text-charcoal placeholder:text-charcoal/30 focus:border-ochre-600 focus:ring-1 focus:ring-ochre-600 focus:outline-none'
+  'w-full font-body text-sm p-3 border border-charcoal/20 bg-cream text-charcoal placeholder:text-charcoal/30 focus:border-terracotta focus:ring-1 focus:ring-terracotta focus:outline-none'
 
 export default function JoinPage() {
   usePageTitle('Join')
@@ -46,7 +46,7 @@ export default function JoinPage() {
           actually works.
         </p>
 
-        <div className="w-16 h-[2px] bg-ochre-600 mt-6 mb-8" />
+        <div className="w-16 h-[2px] bg-terracotta mt-6 mb-8" />
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
@@ -116,7 +116,7 @@ export default function JoinPage() {
 
         <p className="font-body text-sm text-charcoal/50 mt-6 text-center">
           Already a member?{' '}
-          <Link to="/login" className="text-ochre-600 hover:text-ochre-700 font-medium">
+          <Link to="/login" className="text-terracotta hover:text-sienna font-medium">
             Sign in.
           </Link>
         </p>

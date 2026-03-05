@@ -1,25 +1,25 @@
 interface AvatarProps {
   initials: string
-  color?: 'ochre' | 'forest' | 'charcoal'
+  color?: 'olive' | 'terracotta' | 'charcoal'
   size?: 'sm' | 'md' | 'lg'
   className?: string
 }
 
 const colorStyles = {
-  ochre: 'bg-ochre-600 text-cream',
-  forest: 'bg-forest-800 text-cream',
-  charcoal: 'bg-charcoal text-cream',
+  olive: 'bg-olive text-warm-white',
+  terracotta: 'bg-terracotta text-warm-white',
+  charcoal: 'bg-charcoal text-warm-white',
 }
 
 const sizeStyles = {
-  sm: 'w-8 h-8 text-xs',
+  sm: 'w-9 h-9 text-xs',
   md: 'w-10 h-10 text-sm',
   lg: 'w-14 h-14 text-base',
 }
 
 export default function Avatar({
   initials,
-  color = 'forest',
+  color = 'olive',
   size = 'md',
   className = '',
 }: AvatarProps) {

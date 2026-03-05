@@ -14,8 +14,8 @@ export default function Button({
     'inline-flex items-center justify-center font-ui font-bold uppercase tracking-wider px-6 py-3 text-sm transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
 
   const variants = {
-    primary: 'bg-forest-800 text-cream hover:bg-forest-700',
-    secondary: 'border-2 border-forest-800 text-forest-800 hover:bg-forest-800 hover:text-cream',
+    primary: 'bg-ink text-warm-white hover:bg-charcoal',
+    secondary: 'bg-warm-white text-ink border border-stone hover:bg-cream',
   }
 
   return (

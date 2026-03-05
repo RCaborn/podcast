@@ -1,6 +1,6 @@
 interface LogoProps {
   size?: 'sm' | 'md' | 'lg'
-  variant?: 'light' | 'dark' | 'forest' | 'ochre'
+  variant?: 'light' | 'dark'
 }
 
 const sizeStyles = {
@@ -10,10 +10,8 @@ const sizeStyles = {
 }
 
 const variantStyles = {
-  light: { text: 'text-charcoal', rule: 'bg-ochre-600' },
-  dark: { text: 'text-cream', rule: 'bg-ochre-400' },
-  forest: { text: 'text-cream', rule: 'bg-ochre-400' },
-  ochre: { text: 'text-charcoal', rule: 'bg-charcoal' },
+  light: { text: 'text-charcoal', rule: 'bg-terracotta' },
+  dark: { text: 'text-warm-white', rule: 'bg-terracotta' },
 }
 
 export default function Logo({ size = 'md', variant = 'light' }: LogoProps) {

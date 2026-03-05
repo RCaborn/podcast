@@ -3,7 +3,7 @@ import type { User } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabase'
 import type { Profile } from '../types/database'
 
-const AVATAR_COLOURS: Profile['avatar_colour'][] = ['forest', 'ochre', 'rust', 'sage', 'ink']
+const AVATAR_COLOURS: Profile['avatar_colour'][] = ['olive', 'terracotta', 'charcoal', 'sienna', 'brass']
 
 function initialsFrom(name: string): string {
   const parts = name.trim().split(/\s+/)

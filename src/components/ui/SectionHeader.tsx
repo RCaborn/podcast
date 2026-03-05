@@ -11,7 +11,7 @@ export default function SectionHeader({ eyebrow, title, className = '' }: Sectio
     <div className={className}>
       <Eyebrow>{eyebrow}</Eyebrow>
       <h2 className="font-display text-3xl font-bold text-charcoal mt-2">{title}</h2>
-      <div className="w-16 h-[2px] bg-ochre-600 mt-4" />
+      <div className="w-16 h-[2px] bg-terracotta mt-4" />
     </div>
   )
 }

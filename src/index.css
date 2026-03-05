@@ -1,33 +1,18 @@
 @import "tailwindcss";
 
 @theme {
-  --color-ochre-50: #fdf8ef;
-  --color-ochre-100: #faecd5;
-  --color-ochre-200: #f4d5aa;
-  --color-ochre-300: #edb974;
-  --color-ochre-400: #e49a42;
-  --color-ochre-500: #dc8226;
-  --color-ochre-600: #c8841d;
-  --color-ochre-700: #9a5118;
-  --color-ochre-800: #7c411b;
-  --color-ochre-900: #653619;
-  --color-ochre-950: #391b0a;
-
-  --color-forest-50: #f0f7f4;
-  --color-forest-100: #dbece3;
-  --color-forest-200: #bad8ca;
-  --color-forest-300: #8dbdaa;
-  --color-forest-400: #5f9d86;
-  --color-forest-500: #3f816b;
-  --color-forest-600: #2f6755;
-  --color-forest-700: #275345;
-  --color-forest-800: #1b4332;
-  --color-forest-900: #1a3a2e;
-  --color-forest-950: #0d201a;
-
-  --color-cream: #faf7f2;
-  --color-sand: #e8dfd0;
-  --color-charcoal: #1a1a1a;
+  --color-ink: #2c2416;
+  --color-warm-white: #faf8f4;
+  --color-cream: #f0ece4;
+  --color-stone: #e2ddd4;
+  --color-terracotta: #c4795a;
+  --color-sienna: #a85d3e;
+  --color-olive: #6b7c5e;
+  --color-olive-muted: #8a9a7a;
+  --color-brass: #b69f72;
+  --color-slate: #7a7168;
+  --color-charcoal: #3d352c;
+  --color-parchment: #ffffff;
 
   --font-display: "Playfair Display", serif;
   --font-body: "Barlow", sans-serif;
@@ -38,17 +23,17 @@ body {
   font-family: var(--font-body);
   margin: 0;
   min-height: 100vh;
-  background-color: var(--color-cream);
+  background-color: var(--color-warm-white);
   color: var(--color-charcoal);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Hero grid-paper texture overlay */
-.hero-grid {
+/* Grid-paper texture overlay (used on Join Banner) */
+.grid-paper {
   position: relative;
 }
-.hero-grid::before {
+.grid-paper::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -57,46 +42,17 @@ body {
       0deg,
       transparent,
       transparent 39px,
-      rgba(26, 26, 26, 0.04) 39px,
-      rgba(26, 26, 26, 0.04) 40px
+      rgba(44, 36, 22, 0.04) 39px,
+      rgba(44, 36, 22, 0.04) 40px
     ),
     repeating-linear-gradient(
       90deg,
       transparent,
       transparent 39px,
-      rgba(26, 26, 26, 0.04) 39px,
-      rgba(26, 26, 26, 0.04) 40px
+      rgba(44, 36, 22, 0.04) 39px,
+      rgba(44, 36, 22, 0.04) 40px
     );
   pointer-events: none;
-}
-
-/* Hero entrance animation */
-@keyframes fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-.animate-fade-up {
-  animation: fade-up 1.2s ease both;
-}
-
-/* Scroll indicator pulse */
-@keyframes scroll-pulse {
-  0%,
-  100% {
-    opacity: 0.4;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-.animate-scroll-pulse {
-  animation: scroll-pulse 2s ease-in-out infinite;
 }
 
 /* Article body prose styles */
@@ -115,7 +71,7 @@ body {
   font-size: 1.25rem;
   line-height: 1.5;
   color: var(--color-charcoal);
-  border-left: 4px solid var(--color-ochre-600);
+  border-left: 4px solid var(--color-terracotta);
   padding-left: 1.5rem;
   margin: 2rem 0;
 }
@@ -160,13 +116,13 @@ body {
   50% { opacity: 0.7; }
 }
 .skeleton {
-  background-color: var(--color-sand);
+  background-color: var(--color-stone);
   animation: skeleton-pulse 1.5s ease-in-out infinite;
 }
 
-/* Override default focus rings globally — use ochre */
+/* Override default focus rings globally — use terracotta */
 *:focus-visible {
-  outline: 2px solid var(--color-ochre-600);
+  outline: 2px solid var(--color-terracotta);
   outline-offset: 2px;
 }
 

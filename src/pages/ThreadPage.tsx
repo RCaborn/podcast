@@ -4,6 +4,7 @@ import { useThread } from '../hooks/useThreads'
 import { useAuth } from '../context/AuthContext'
 import { usePageTitle } from '../hooks/usePageTitle'
 import { supabase } from '../lib/supabase'
+import { mapAvatarColor } from '../lib/avatarColor'
 import Tag from '../components/ui/Tag'
 import Avatar from '../components/ui/Avatar'
 import Button from '../components/ui/Button'
@@ -19,12 +20,6 @@ const categoryLabels: Record<string, string> = {
   cheesemongers: 'Cheesemongers',
   'farm-shops': 'Farm Shops',
   general: 'General',
-}
-
-function mapAvatarColor(c: string | null): 'ochre' | 'forest' | 'charcoal' {
-  if (c === 'ochre') return 'ochre'
-  if (c === 'forest' || c === 'sage') return 'forest'
-  return 'charcoal'
 }
 
 function timeAgo(dateStr: string): string {
@@ -68,11 +63,11 @@ export default function ThreadPage() {
             <div className="skeleton w-10 h-10 rounded-full" />
             <div className="skeleton h-3 w-40" />
           </div>
-          <div className="w-full h-[2px] bg-sand mt-10" />
+          <div className="w-full h-[2px] bg-stone mt-10" />
           <div className="mt-8 space-y-8">
             {[0, 1].map((i) => (
               <div key={i} className="flex gap-4">
-                <div className="skeleton w-8 h-8 rounded-full shrink-0" />
+                <div className="skeleton w-9 h-9 rounded-full shrink-0" />
                 <div className="flex-1">
                   <div className="skeleton h-3 w-36" />
                   <div className="skeleton h-4 w-full mt-2" />
@@ -90,7 +85,7 @@ export default function ThreadPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
         <p className="font-display text-2xl">Thread not found</p>
-        <Link to="/community" className="font-ui text-sm uppercase tracking-wider text-ochre-600 hover:text-ochre-700">
+        <Link to="/community" className="font-ui text-sm uppercase tracking-wider text-terracotta hover:text-sienna">
           Back to community
         </Link>
       </div>
@@ -127,7 +122,6 @@ export default function ThreadPage() {
       return
     }
 
-    // Optimistically add the reply
     setOptimisticReplies((prev) => [
       ...prev,
       { ...(data as Reply), author: profile },
@@ -141,14 +135,14 @@ export default function ThreadPage() {
         {/* Back link */}
         <Link
           to="/community"
-          className="inline-block font-ui text-xs uppercase tracking-wider text-ochre-600 hover:text-ochre-700 mb-8"
+          className="inline-block font-ui text-xs uppercase tracking-wider text-terracotta hover:text-sienna mb-8"
         >
           &larr; Back to The Counter
         </Link>
 
         {/* Original question */}
         <div className="mb-10">
-          <Tag variant="outlined">{categoryLabels[thread.category] ?? thread.category}</Tag>
+          <Tag variant="outlined" contentType="Community">{categoryLabels[thread.category] ?? thread.category}</Tag>
 
           <h1 className="font-display italic text-2xl sm:text-3xl mt-5 leading-snug">
             {thread.title}
@@ -173,7 +167,7 @@ export default function ThreadPage() {
         </div>
 
         {/* Divider */}
-        <div className="w-full h-[2px] bg-ochre-600" />
+        <div className="w-full h-[2px] bg-terracotta" />
 
         {/* Replies */}
         {allReplies.length > 0 ? (
@@ -191,7 +185,7 @@ export default function ThreadPage() {
                     size="sm"
                     className="shrink-0 mt-1"
                   />
-                  <div className="min-w-0">
+                  <div className="min-w-0 bg-cream p-4 flex-1">
                     <p className="font-ui text-[11px] font-semibold uppercase tracking-wider text-charcoal/50">
                       {rName}
                       {rShop && <> &middot; {rShop}</>}
@@ -210,7 +204,7 @@ export default function ThreadPage() {
         )}
 
         {/* Reply form */}
-        <div className="mt-12 pt-8 border-t border-sand">
+        <div className="mt-12 pt-8 border-t border-stone">
           <h3 className="font-ui text-xs font-semibold uppercase tracking-wider text-charcoal/50 mb-4">
             Reply
           </h3>
@@ -222,7 +216,7 @@ export default function ThreadPage() {
                 value={replyContent}
                 onChange={(e) => setReplyContent(e.target.value)}
                 placeholder="Share your thoughts…"
-                className="w-full font-body text-sm p-4 border border-charcoal/20 bg-cream text-charcoal placeholder:text-charcoal/30 resize-y focus:border-ochre-600 focus:ring-1 focus:ring-ochre-600 focus:outline-none"
+                className="w-full font-body text-sm p-4 border border-charcoal/20 bg-cream text-charcoal placeholder:text-charcoal/30 resize-y focus:border-terracotta focus:ring-1 focus:ring-terracotta focus:outline-none"
               />
               {replyError && (
                 <p className="font-body text-sm text-red-600 mt-2">{replyError}</p>
@@ -244,7 +238,7 @@ export default function ThreadPage() {
               <div className="flex items-center gap-4 mt-3">
                 <Link
                   to="/join"
-                  className="inline-flex items-center justify-center font-ui font-bold uppercase text-sm tracking-[0.2em] bg-forest-800 text-cream px-6 py-3 hover:bg-forest-700 transition-colors"
+                  className="inline-flex items-center justify-center font-ui font-bold uppercase text-sm tracking-[0.2em] bg-ink text-warm-white px-6 py-3 hover:bg-charcoal transition-colors"
                 >
                   Join the community to reply
                 </Link>

@@ -51,7 +51,7 @@ insert into public.profiles (id, full_name, shop_name, location, bio, avatar_ini
   'Edinburgh',
   'Third-generation Italian-Scot running an Edinburgh institution since 2012. Obsessed with nduja, natural wine, and keeping the neighbourhood fed properly.',
   'RC',
-  'ochre'
+  'terracotta'
 ),
 (
   '22222222-2222-2222-2222-222222222222',
@@ -60,7 +60,7 @@ insert into public.profiles (id, full_name, shop_name, location, bio, avatar_ini
   'Bristol',
   'Former chef turned shopkeeper. Opened The Corner Larder in Bedminster in 2019. Sourdough evangelist. Believes every neighbourhood deserves a proper counter.',
   'MW',
-  'forest'
+  'olive'
 ),
 (
   '33333333-3333-3333-3333-333333333333',
@@ -69,12 +69,12 @@ insert into public.profiles (id, full_name, shop_name, location, bio, avatar_ini
   'Hebden Bridge',
   'Runs a farmshop-meets-deli in the Calder Valley with her daughter Nell. Champions small Yorkshire producers and refuses to stock anything that travels more than fifty miles.',
   'FH',
-  'sage'
+  'sienna'
 );
 
 -- ---------- articles ----------
 
-insert into public.articles (title, slug, excerpt, body, tag, author_name, author_source, read_time, card_style, issue_number, published_at) values
+insert into public.articles (title, slug, excerpt, body, tag, author_name, author_source, read_time, card_style, issue_number, image_url, is_featured, published_at) values
 
 -- 1: Newsletter Issue 12
 (
@@ -86,12 +86,14 @@ insert into public.articles (title, slug, excerpt, body, tag, author_name, autho
   'Counter Culture Editorial',
   'Counter Culture Weekly',
   7,
-  'ochre-gradient',
+  'light',
   12,
+  null,
+  false,
   '2026-02-28T09:00:00Z'
 ),
 
--- 2: Success Story
+-- 2: Success Story (FEATURED with image)
 (
   'We stopped trying to stock everything. Sales went up 40%.',
   'stopped-stocking-everything',
@@ -101,8 +103,10 @@ insert into public.articles (title, slug, excerpt, body, tag, author_name, autho
   'Marcus Webb',
   'The Corner Larder, Bristol',
   6,
-  'forest',
+  'light',
   null,
+  'https://placehold.co/800x600?text=Counter+Culture+Featured',
+  true,
   '2026-02-20T09:00:00Z'
 ),
 
@@ -118,10 +122,12 @@ insert into public.articles (title, slug, excerpt, body, tag, author_name, autho
   5,
   'light',
   null,
+  null,
+  false,
   '2026-02-14T09:00:00Z'
 ),
 
--- 4: Industry News
+-- 4: Industry News (FEATURED with image)
 (
   'The supplier every deli in the north is talking about',
   'supplier-north-talking-about',
@@ -133,6 +139,8 @@ insert into public.articles (title, slug, excerpt, body, tag, author_name, autho
   5,
   'cream',
   null,
+  'https://placehold.co/800x600?text=Counter+Culture+Story',
+  true,
   '2026-02-07T09:00:00Z'
 ),
 
@@ -146,8 +154,10 @@ insert into public.articles (title, slug, excerpt, body, tag, author_name, autho
   'Counter Culture Editorial',
   'Counter Culture Weekly',
   6,
-  'forest',
+  'light',
   null,
+  null,
+  false,
   '2026-01-31T09:00:00Z'
 ),
 
@@ -161,8 +171,10 @@ insert into public.articles (title, slug, excerpt, body, tag, author_name, autho
   'Counter Culture Editorial',
   'Counter Culture Weekly',
   8,
-  'ochre-gradient',
+  'light',
   11,
+  null,
+  false,
   '2026-01-24T09:00:00Z'
 );
 

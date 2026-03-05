@@ -8,31 +8,28 @@ Counter Culture is a podcast community platform built with React, TypeScript, Vi
 
 | Token           | Hex       | Usage                          |
 |-----------------|-----------|--------------------------------|
-| `ochre-50`      | `#fdf8ef` | Ochre tint backgrounds         |
-| `ochre-100`     | `#faecd5` | Hover states, subtle fills     |
-| `ochre-200`     | `#f4d5aa` |                                |
-| `ochre-300`     | `#edb974` |                                |
-| `ochre-400`     | `#e49a42` | Accent highlights              |
-| `ochre-500`     | `#dc8226` |                                |
-| `ochre-600`     | `#c8841d` | **Primary ochre** — eyebrows, rules, tags |
-| `ochre-700`     | `#9a5118` |                                |
-| `ochre-800`     | `#7c411b` |                                |
-| `ochre-900`     | `#653619` |                                |
-| `ochre-950`     | `#391b0a` |                                |
-| `forest-50`     | `#f0f7f4` | Forest tint backgrounds        |
-| `forest-100`    | `#dbece3` |                                |
-| `forest-200`    | `#bad8ca` |                                |
-| `forest-300`    | `#8dbdaa` |                                |
-| `forest-400`    | `#5f9d86` |                                |
-| `forest-500`    | `#3f816b` |                                |
-| `forest-600`    | `#2f6755` |                                |
-| `forest-700`    | `#275345` |                                |
-| `forest-800`    | `#1b4332` | **Primary forest** — buttons, dark UI |
-| `forest-900`    | `#1a3a2e` |                                |
-| `forest-950`    | `#0d201a` |                                |
-| `cream`         | `#faf7f2` | Page background                |
-| `sand`          | `#e8dfd0` | Card / section dividers        |
-| `charcoal`      | `#1a1a1a` | Body text, dark backgrounds    |
+| `ink`           | `#2c2416` | Primary text, dark UI          |
+| `warm-white`    | `#faf8f4` | Page background                |
+| `cream`         | `#f0ece4` | Card fills, reply cards        |
+| `stone`         | `#e2ddd4` | Heavier fills (join banner), dividers |
+| `terracotta`    | `#c4795a` | **Primary accent** — eyebrows, rules, newsletter tags |
+| `sienna`        | `#a85d3e` | Deeper accent — opinion tags, hover text |
+| `olive`         | `#6b7c5e` | **Secondary accent** — success/community tags, buttons |
+| `olive-muted`   | `#8a9a7a` | Soft green — ghost tags on dark bg |
+| `brass`         | `#b69f72` | Warm metallic — industry tags, newsletter labels |
+| `slate`         | `#7a7168` | Subdued text, captions         |
+| `charcoal`      | `#3d352c` | Dark card backgrounds, newsletter strip |
+| `parchment`     | `#ffffff` | Pure white                     |
+
+## Colour-by-Content-Type
+
+| Content Type    | Colour      |
+|-----------------|-------------|
+| Newsletter      | terracotta  |
+| Success Story   | olive       |
+| Opinion         | sienna      |
+| Industry News   | brass       |
+| Community       | olive       |
 
 ## Typography
 
@@ -51,25 +48,32 @@ Counter Culture is a podcast community platform built with React, TypeScript, Vi
 ## Design Patterns
 
 - **Sharp corners** — no border-radius on buttons, tags, or cards (0px)
-- **Ochre rules** — 2px horizontal rules in `ochre-600` used as dividers
+- **Terracotta rules** — 2px horizontal rules in `terracotta` used as dividers
 - **Uppercase UI text** — all Barlow Condensed elements are uppercase with wide tracking
-- **Eyebrow labels** — small ochre uppercase labels above headings (`font-ui`, `text-xs`, `font-semibold`, `uppercase`, `tracking-[0.15em]`, `text-ochre-600`)
-- **Section headers** — eyebrow + Playfair Display bold title + ochre divider line
+- **Eyebrow labels** — small terracotta uppercase labels above headings (`font-ui`, `text-xs`, `font-semibold`, `uppercase`, `tracking-[0.15em]`, `text-terracotta`), optional trailing 1px rule
+- **Section headers** — eyebrow + Playfair Display bold title + terracotta divider line
+- **Content-type tags** — Tag colour is determined by article tag / content type (see table above)
 
 ## Component Inventory
 
-| Component       | Path                                | Props                                       |
-|-----------------|-------------------------------------|---------------------------------------------|
-| `Logo`          | `src/components/ui/Logo.tsx`        | `size: sm\|md\|lg`, `variant: light\|dark\|forest\|ochre` |
-| `Eyebrow`       | `src/components/ui/Eyebrow.tsx`     | `children`, `className`                     |
-| `Tag`           | `src/components/ui/Tag.tsx`         | `children`, `variant: filled\|outlined`, `className` |
-| `Button`        | `src/components/ui/Button.tsx`      | `variant: primary\|secondary`, `+ native button props` |
-| `Avatar`        | `src/components/ui/Avatar.tsx`      | `initials`, `color: ochre\|forest\|charcoal`, `size: sm\|md\|lg` |
-| `SectionHeader` | `src/components/ui/SectionHeader.tsx` | `eyebrow`, `title`, `className`           |
+| Component       | Path                                  | Props                                       |
+|-----------------|---------------------------------------|---------------------------------------------|
+| `Logo`          | `src/components/ui/Logo.tsx`          | `size: sm\|md\|lg`, `variant: light\|dark`  |
+| `Eyebrow`       | `src/components/ui/Eyebrow.tsx`       | `children`, `rule?: boolean`, `className`   |
+| `Tag`           | `src/components/ui/Tag.tsx`           | `children`, `variant: filled\|outlined`, `contentType?: string`, `className` |
+| `Button`        | `src/components/ui/Button.tsx`        | `variant: primary\|secondary`, `+ native button props` |
+| `Avatar`        | `src/components/ui/Avatar.tsx`        | `initials`, `color: olive\|terracotta\|charcoal`, `size: sm\|md\|lg` |
+| `SectionHeader` | `src/components/ui/SectionHeader.tsx` | `eyebrow`, `title`, `className`             |
+
+## Shared Utilities
+
+| Utility            | Path                          | Purpose                              |
+|--------------------|-------------------------------|--------------------------------------|
+| `mapAvatarColor`   | `src/lib/avatarColor.ts`      | Maps DB avatar_colour to Avatar prop |
 
 ## Routes
 
-| Path                     | Page (not yet built)  |
+| Path                     | Page                  |
 |--------------------------|-----------------------|
 | `/`                      | Home                  |
 | `/articles/:slug`        | Article detail        |

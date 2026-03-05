@@ -4,6 +4,7 @@ import { useThreads } from '../hooks/useThreads'
 import { useAuth } from '../context/AuthContext'
 import { usePageTitle } from '../hooks/usePageTitle'
 import { supabase } from '../lib/supabase'
+import { mapAvatarColor } from '../lib/avatarColor'
 import Tag from '../components/ui/Tag'
 import Avatar from '../components/ui/Avatar'
 import Button from '../components/ui/Button'
@@ -25,12 +26,6 @@ const categoryLabels: Record<Category, string> = {
   cheesemongers: 'Cheesemongers',
   'farm-shops': 'Farm Shops',
   general: 'General',
-}
-
-function mapAvatarColor(c: string | null): 'ochre' | 'forest' | 'charcoal' {
-  if (c === 'ochre') return 'ochre'
-  if (c === 'forest' || c === 'sage') return 'forest'
-  return 'charcoal'
 }
 
 function timeAgo(dateStr: string): string {
@@ -57,9 +52,9 @@ function ThreadCard({ thread: t }: { thread: ThreadWithMeta }) {
   return (
     <Link
       to={`/community/${t.id}`}
-      className="block bg-cream border border-sand p-5 sm:p-8 card-hover hover:shadow-md"
+      className="block bg-cream border border-stone p-5 sm:p-8 card-hover hover:shadow-md"
     >
-      <Tag variant="outlined">{categoryLabels[t.category] ?? t.category}</Tag>
+      <Tag variant="outlined" contentType="Community">{categoryLabels[t.category] ?? t.category}</Tag>
 
       <h3 className="font-display italic text-xl mt-4 leading-snug">
         {t.title}
@@ -89,7 +84,7 @@ function ThreadCard({ thread: t }: { thread: ThreadWithMeta }) {
 /* ------------------------------------------------------------------ */
 
 const inputClass =
-  'w-full font-body text-sm p-3 border border-charcoal/20 bg-cream text-charcoal placeholder:text-charcoal/30 focus:border-ochre-600 focus:ring-1 focus:ring-ochre-600 focus:outline-none'
+  'w-full font-body text-sm p-3 border border-charcoal/20 bg-cream text-charcoal placeholder:text-charcoal/30 focus:border-terracotta focus:ring-1 focus:ring-terracotta focus:outline-none'
 
 function NewThreadForm({ onClose }: { onClose: () => void }) {
   const { user } = useAuth()
@@ -128,7 +123,7 @@ function NewThreadForm({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <div className="bg-cream border border-sand p-6 sm:p-8">
+    <div className="bg-cream border border-stone p-6 sm:p-8">
       <h3 className="font-display font-bold text-lg mb-4">Start a new thread</h3>
 
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -205,7 +200,7 @@ export default function CommunityPage() {
       {/* Header */}
       <header className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mb-10">
         <h1 className="font-display font-bold text-4xl sm:text-5xl">The Counter</h1>
-        <div className="w-16 h-[2px] bg-ochre-600 mt-6" />
+        <div className="w-16 h-[2px] bg-terracotta mt-6" />
       </header>
 
       {/* Category filter tabs */}
@@ -217,8 +212,8 @@ export default function CommunityPage() {
               onClick={() => setActive(cat)}
               className={`shrink-0 font-ui text-xs font-semibold uppercase tracking-wider px-4 py-2 transition-colors ${
                 active === cat
-                  ? 'bg-charcoal text-cream'
-                  : 'border border-charcoal text-charcoal hover:bg-charcoal/5'
+                  ? 'bg-ink text-warm-white'
+                  : 'border border-ink/20 text-charcoal hover:bg-charcoal/5'
               }`}
             >
               {categoryLabels[cat]}
@@ -240,7 +235,7 @@ export default function CommunityPage() {
         ) : (
           <Link
             to="/join"
-            className="inline-flex items-center justify-center font-ui font-bold uppercase text-sm tracking-[0.2em] bg-forest-800 text-cream px-6 py-3 hover:bg-forest-700 transition-colors"
+            className="inline-flex items-center justify-center font-ui font-bold uppercase text-sm tracking-[0.2em] bg-ink text-warm-white px-6 py-3 hover:bg-charcoal transition-colors"
           >
             Join to start a thread
           </Link>
@@ -252,12 +247,12 @@ export default function CommunityPage() {
         {loading ? (
           <div className="grid grid-cols-1 gap-4">
             {[0, 1, 2].map((i) => (
-              <div key={i} className="p-5 sm:p-8 bg-cream border border-sand">
+              <div key={i} className="p-5 sm:p-8 bg-cream border border-stone">
                 <div className="skeleton h-5 w-16" />
                 <div className="skeleton h-6 w-3/4 mt-4" />
                 <div className="skeleton h-3 w-32 mt-3" />
                 <div className="flex items-center gap-3 mt-4">
-                  <div className="skeleton w-8 h-8 rounded-full" />
+                  <div className="skeleton w-9 h-9 rounded-full" />
                   <div className="skeleton h-3 w-36" />
                 </div>
               </div>

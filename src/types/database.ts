@@ -9,7 +9,7 @@ export interface Profile {
   location: string | null
   bio: string | null
   avatar_initials: string | null
-  avatar_colour: 'forest' | 'ochre' | 'rust' | 'sage' | 'ink' | null
+  avatar_colour: 'olive' | 'terracotta' | 'charcoal' | 'sienna' | 'brass' | null
   created_at: string
 }
 
@@ -23,8 +23,10 @@ export interface Article {
   author_name: string | null
   author_source: string | null
   read_time: number | null
-  card_style: 'forest' | 'ochre-gradient' | 'light' | 'cream' | null
+  card_style: 'light' | 'cream' | null
   issue_number: number | null
+  image_url: string | null
+  is_featured: boolean
   published_at: string | null
   created_at: string
 }

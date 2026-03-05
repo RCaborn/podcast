@@ -4,41 +4,10 @@ import { usePageTitle } from '../hooks/usePageTitle'
 import type { Article } from '../types/database'
 
 /* ------------------------------------------------------------------ */
-/*  Card style helpers                                                 */
+/*  Issue Card                                                         */
 /* ------------------------------------------------------------------ */
 
-const styleMap: Record<string, { card: string; eyebrow: string; headline: string; date: string }> = {
-  'ochre-gradient': {
-    card: 'text-cream',
-    eyebrow: 'text-cream/60',
-    headline: 'text-cream',
-    date: 'text-cream/50',
-  },
-  forest: {
-    card: 'bg-forest-800 text-cream',
-    eyebrow: 'text-cream/60',
-    headline: 'text-cream',
-    date: 'text-cream/50',
-  },
-  light: {
-    card: 'bg-cream text-charcoal border border-sand',
-    eyebrow: 'text-ochre-600',
-    headline: 'text-charcoal',
-    date: 'text-charcoal/40',
-  },
-  cream: {
-    card: 'bg-ochre-50 text-charcoal',
-    eyebrow: 'text-ochre-600',
-    headline: 'text-charcoal',
-    date: 'text-charcoal/40',
-  },
-}
-
 function IssueCard({ article: a }: { article: Article }) {
-  const key = a.card_style ?? 'light'
-  const s = styleMap[key] ?? styleMap.light
-  const isOchre = key === 'ochre-gradient'
-
   const publishedDate = a.published_at
     ? new Date(a.published_at).toLocaleDateString('en-GB', {
         day: 'numeric',
@@ -50,20 +19,19 @@ function IssueCard({ article: a }: { article: Article }) {
   return (
     <Link
       to={`/newsletter/${a.slug}`}
-      className={`block p-6 sm:p-10 card-hover hover:shadow-lg ${s.card}`}
-      style={isOchre ? { background: 'linear-gradient(135deg, #e8973a 0%, #d4603a 100%)' } : undefined}
+      className="group block p-6 sm:p-10 bg-warm-white border border-stone card-hover hover:shadow-lg"
     >
       {a.issue_number != null && (
-        <p className={`font-ui text-xs font-semibold uppercase tracking-[0.15em] ${s.eyebrow}`}>
+        <p className="font-ui text-xs font-semibold uppercase tracking-[0.15em] text-terracotta">
           Issue {String(a.issue_number).padStart(3, '0')}
         </p>
       )}
 
-      <h2 className={`font-display font-bold text-xl sm:text-2xl mt-3 leading-snug ${s.headline}`}>
+      <h2 className="font-display font-bold text-xl sm:text-2xl mt-3 leading-snug group-hover:text-sienna transition-colors">
         {a.title}
       </h2>
 
-      <p className={`font-ui text-[11px] uppercase tracking-wider mt-4 ${s.date}`}>
+      <p className="font-ui text-[11px] uppercase tracking-wider mt-4 text-slate">
         {publishedDate}
         {a.read_time && <> &middot; {a.read_time} min read</>}
       </p>
@@ -92,7 +60,7 @@ export default function NewsletterPage() {
         <p className="font-display italic text-charcoal/60 text-lg mt-3">
           Every week, one issue. No filler.
         </p>
-        <div className="w-16 h-[2px] bg-ochre-600 mt-6" />
+        <div className="w-16 h-[2px] bg-terracotta mt-6" />
       </header>
 
       {/* Issue list */}
@@ -100,7 +68,7 @@ export default function NewsletterPage() {
         {loading ? (
           <div className="grid grid-cols-1 gap-6">
             {[0, 1, 2].map((i) => (
-              <div key={i} className="p-6 sm:p-10 bg-cream border border-sand">
+              <div key={i} className="p-6 sm:p-10 bg-warm-white border border-stone">
                 <div className="skeleton h-4 w-20" />
                 <div className="skeleton h-7 w-3/4 mt-3" />
                 <div className="skeleton h-3 w-40 mt-4" />

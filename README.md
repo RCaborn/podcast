@@ -1,6 +1,6 @@
 # Counter Culture
 
-Counter Culture is a community platform for independent food retailers — delis, butchers, cheesemongers, and farm shops. It features editorial articles, a weekly newsletter, and community discussion forums, all wrapped in a distinctive brand identity built around sharp corners, ochre accents, and serif typography.
+Counter Culture is a community platform for independent food retailers — delis, butchers, cheesemongers, and farm shops. It features editorial articles, a weekly newsletter, and community discussion forums, all wrapped in a distinctive brand identity built around sharp corners, terracotta accents, and serif typography.
 
 ## Setup
 
@@ -24,7 +24,8 @@ Run the schema migration and seed data against your Supabase project:
 
 1. Go to your Supabase dashboard → SQL Editor
 2. Run `supabase/migrations/001_initial_schema.sql` to create tables and RLS policies
-3. Run `supabase/seed.sql` to populate sample data (this inserts stub `auth.users` rows first, then profiles, articles, threads, and replies)
+3. Run `supabase/migrations/002_design_refresh.sql` to add new columns and update constraints
+4. Run `supabase/seed.sql` to populate sample data (this inserts stub `auth.users` rows first, then profiles, articles, threads, and replies)
 
 Or via the Supabase CLI:
 
