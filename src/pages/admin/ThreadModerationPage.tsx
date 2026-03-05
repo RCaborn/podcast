@@ -74,7 +74,7 @@ export default function ThreadModerationPage() {
     if (!thread) return
     await supabase.from('threads').update({ [field]: !thread[field] }).eq('id', thread.id)
     const label = field.replace('is_', '')
-    toast(`Thread ${!thread[field] ? label : 'un' + label}${!thread[field] ? 'ed' : 'ed'}`)
+    toast(`Thread ${!thread[field] ? label : 'un' + label}`)
     load()
   }
 

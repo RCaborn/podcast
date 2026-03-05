@@ -511,7 +511,7 @@ UPDATE public.articles SET featured_position = 'aside'
   WHERE slug = 'farm-shop-bubble';
 
 UPDATE public.articles SET featured_position = 'newsletter-strip'
-  WHERE slug = 'best-delis-not-competing';
+  WHERE slug = 'first-year-behind-counter';
 
 -- Assign featured thread positions
 UPDATE public.threads SET featured_thread_position = 'community-inline'

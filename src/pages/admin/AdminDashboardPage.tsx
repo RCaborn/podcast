@@ -18,11 +18,12 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     async function load() {
-      const [articles, threads, replies, featured] = await Promise.all([
+      const [articles, threads, replies, featuredArticles, featuredThreads] = await Promise.all([
         supabase.from('articles').select('id, status'),
         supabase.from('threads').select('id', { count: 'exact', head: true }),
         supabase.from('replies').select('id', { count: 'exact', head: true }),
         supabase.from('articles').select('id').not('featured_position', 'is', null),
+        supabase.from('threads').select('id').not('featured_thread_position', 'is', null),
       ])
 
       const arts = (articles.data ?? []) as { id: string; status: string }[]
@@ -33,7 +34,7 @@ export default function AdminDashboardPage() {
         drafts: arts.filter((a) => a.status === 'draft').length,
         totalThreads: threads.count ?? 0,
         totalReplies: replies.count ?? 0,
-        homepageSlots: (featured.data ?? []).length,
+        homepageSlots: (featuredArticles.data ?? []).length + (featuredThreads.data ?? []).length,
       })
     }
     load()
@@ -60,7 +61,7 @@ export default function AdminDashboardPage() {
           <StatCard
             number={stats.homepageSlots}
             label="Homepage slots filled"
-            detail="out of 11"
+            detail="out of 13"
           />
         </div>
       )}

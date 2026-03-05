@@ -47,7 +47,7 @@ export default function CommunityModerationPage() {
   async function toggleFlag(id: string, field: 'is_pinned' | 'is_locked' | 'is_hidden', current: boolean) {
     await supabase.from('threads').update({ [field]: !current }).eq('id', id)
     const label = field.replace('is_', '')
-    toast(`Thread ${!current ? label : 'un' + label}${!current ? 'ed' : 'ed'}`)
+    toast(`Thread ${!current ? label : 'un' + label}`)
     load()
   }
 
