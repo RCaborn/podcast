@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { usePageTitle } from '../../hooks/usePageTitle'
+import { useToast } from '../../components/ui/Toast'
 import type { Profile } from '../../types/database'
 
 interface ThreadRow {
@@ -20,9 +21,11 @@ interface ThreadRow {
 
 export default function CommunityModerationPage() {
   usePageTitle('Community — Admin')
+  const toast = useToast()
   const [threads, setThreads] = useState<ThreadRow[]>([])
   const [loading, setLoading] = useState(true)
   const [showHidden, setShowHidden] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
 
   const load = useCallback(async () => {
     const { data } = await supabase
@@ -43,6 +46,17 @@ export default function CommunityModerationPage() {
 
   async function toggleFlag(id: string, field: 'is_pinned' | 'is_locked' | 'is_hidden', current: boolean) {
     await supabase.from('threads').update({ [field]: !current }).eq('id', id)
+    const label = field.replace('is_', '')
+    toast(`Thread ${!current ? label : 'un' + label}${!current ? 'ed' : 'ed'}`)
+    load()
+  }
+
+  async function deleteThread(id: string) {
+    await supabase.from('replies').delete().eq('thread_id', id)
+    await supabase.from('thread_reactions').delete().eq('thread_id', id)
+    await supabase.from('threads').delete().eq('id', id)
+    setConfirmDelete(null)
+    toast('Thread deleted')
     load()
   }
 
@@ -135,6 +149,12 @@ export default function CommunityModerationPage() {
                     active={t.is_hidden}
                     onClick={() => toggleFlag(t.id, 'is_hidden', t.is_hidden)}
                   />
+                  <button
+                    onClick={() => setConfirmDelete(t.id)}
+                    className="font-ui text-[10px] font-semibold uppercase tracking-[0.15em] py-1.5 px-2.5 text-sienna/60 hover:text-sienna border border-ink/6 transition-colors"
+                  >
+                    Delete
+                  </button>
                 </div>
               </div>
             </div>
@@ -144,6 +164,33 @@ export default function CommunityModerationPage() {
             <p className="font-body text-slate py-8 text-center">No threads found.</p>
           )}
         </div>
+      )}
+
+      {/* Delete confirmation modal */}
+      {confirmDelete && (
+        <>
+          <div className="fixed inset-0 bg-charcoal/40 z-50" onClick={() => setConfirmDelete(null)} />
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-parchment border border-ink/10 shadow-xl p-8 max-w-sm w-full">
+            <h3 className="font-display font-bold text-xl">Delete thread?</h3>
+            <p className="font-body text-[14px] text-slate mt-2">
+              This will permanently delete the thread and all its replies.
+            </p>
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => setConfirmDelete(null)}
+                className="font-ui text-[11px] font-semibold uppercase tracking-[0.2em] border border-ink/10 py-2.5 px-5 hover:bg-cream transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => deleteThread(confirmDelete)}
+                className="font-ui text-[11px] font-semibold uppercase tracking-[0.2em] bg-sienna text-warm-white py-2.5 px-5 hover:bg-terracotta transition-colors"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </>
       )}
     </div>
   )

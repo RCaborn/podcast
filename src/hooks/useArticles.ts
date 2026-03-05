@@ -15,6 +15,7 @@ export function useArticles() {
       const { data, error: err } = await supabase
         .from('articles')
         .select('*')
+        .eq('status', 'published')
         .order('published_at', { ascending: false })
 
       if (cancelled) return
@@ -52,6 +53,7 @@ export function useArticle(slug: string | undefined) {
         .from('articles')
         .select('*')
         .eq('slug', slug)
+        .eq('status', 'published')
         .single()
 
       if (cancelled) return

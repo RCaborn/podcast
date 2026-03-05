@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import Logo from '../ui/Logo'
+import { ToastProvider } from '../ui/Toast'
 
 const adminNav = [
   { to: '/admin', label: 'Dashboard', end: true },
@@ -18,6 +19,7 @@ export default function AdminLayout() {
   const [menuOpen, setMenuOpen] = useState(false)
 
   return (
+    <ToastProvider>
     <div className="min-h-screen flex flex-col md:flex-row">
       {/* Mobile top bar */}
       <div className="md:hidden flex items-center justify-between bg-charcoal px-4 h-14">
@@ -100,5 +102,6 @@ export default function AdminLayout() {
         <Outlet />
       </main>
     </div>
+    </ToastProvider>
   )
 }

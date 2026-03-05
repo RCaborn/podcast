@@ -1,7 +1,8 @@
 import { useEffect, useState, useCallback } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { usePageTitle } from '../../hooks/usePageTitle'
+import { useToast } from '../../components/ui/Toast'
 import Avatar from '../../components/ui/Avatar'
 import { mapAvatarColor } from '../../lib/avatarColor'
 import type { Profile } from '../../types/database'
@@ -30,9 +31,13 @@ interface ReplyData {
 export default function ThreadModerationPage() {
   usePageTitle('Thread — Admin')
   const { threadId } = useParams<{ threadId: string }>()
+  const navigate = useNavigate()
+  const toast = useToast()
   const [thread, setThread] = useState<ThreadData | null>(null)
   const [replies, setReplies] = useState<ReplyData[]>([])
   const [loading, setLoading] = useState(true)
+  const [confirmDeleteThread, setConfirmDeleteThread] = useState(false)
+  const [confirmDeleteReply, setConfirmDeleteReply] = useState<string | null>(null)
 
   const load = useCallback(async () => {
     if (!threadId) return
@@ -68,17 +73,31 @@ export default function ThreadModerationPage() {
   async function toggleThreadFlag(field: 'is_pinned' | 'is_locked' | 'is_hidden') {
     if (!thread) return
     await supabase.from('threads').update({ [field]: !thread[field] }).eq('id', thread.id)
+    const label = field.replace('is_', '')
+    toast(`Thread ${!thread[field] ? label : 'un' + label}${!thread[field] ? 'ed' : 'ed'}`)
     load()
   }
 
   async function toggleReplyHidden(replyId: string, current: boolean) {
     await supabase.from('replies').update({ is_hidden: !current }).eq('id', replyId)
+    toast(current ? 'Reply shown' : 'Reply hidden')
     load()
   }
 
   async function deleteReply(replyId: string) {
     await supabase.from('replies').delete().eq('id', replyId)
+    setConfirmDeleteReply(null)
+    toast('Reply deleted')
     load()
+  }
+
+  async function deleteThread() {
+    if (!thread) return
+    await supabase.from('replies').delete().eq('thread_id', thread.id)
+    await supabase.from('thread_reactions').delete().eq('thread_id', thread.id)
+    await supabase.from('threads').delete().eq('id', thread.id)
+    toast('Thread deleted')
+    navigate('/admin/community')
   }
 
   if (loading) {
@@ -121,11 +140,26 @@ export default function ThreadModerationPage() {
         </span>
       </div>
 
+      {/* Locked banner */}
+      {thread.is_locked && (
+        <div className="bg-brass/10 border border-brass/30 p-3 mt-4">
+          <p className="font-ui text-[11px] font-semibold uppercase tracking-[0.15em] text-brass">
+            This thread is locked — no new replies can be posted.
+          </p>
+        </div>
+      )}
+
       {/* Moderation controls */}
       <div className="flex gap-2 mt-6">
         <ToggleBtn label={thread.is_pinned ? 'Unpin' : 'Pin'} active={thread.is_pinned} onClick={() => toggleThreadFlag('is_pinned')} />
         <ToggleBtn label={thread.is_locked ? 'Unlock' : 'Lock'} active={thread.is_locked} onClick={() => toggleThreadFlag('is_locked')} />
         <ToggleBtn label={thread.is_hidden ? 'Unhide' : 'Hide'} active={thread.is_hidden} onClick={() => toggleThreadFlag('is_hidden')} />
+        <button
+          onClick={() => setConfirmDeleteThread(true)}
+          className="font-ui text-[10px] font-semibold uppercase tracking-[0.15em] py-2 px-3 text-sienna/60 hover:text-sienna border border-ink/6 transition-colors"
+        >
+          Delete Thread
+        </button>
       </div>
 
       {/* Replies */}
@@ -173,7 +207,7 @@ export default function ThreadModerationPage() {
                 {r.is_hidden ? 'Show' : 'Hide'}
               </button>
               <button
-                onClick={() => deleteReply(r.id)}
+                onClick={() => setConfirmDeleteReply(r.id)}
                 className="font-ui text-[10px] font-semibold uppercase tracking-[0.15em] text-sienna/60 hover:text-sienna transition-colors"
               >
                 Delete
@@ -186,6 +220,60 @@ export default function ThreadModerationPage() {
           <p className="font-body text-slate text-center py-6">No replies yet.</p>
         )}
       </div>
+
+      {/* Delete thread confirmation */}
+      {confirmDeleteThread && (
+        <>
+          <div className="fixed inset-0 bg-charcoal/40 z-50" onClick={() => setConfirmDeleteThread(false)} />
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-parchment border border-ink/10 shadow-xl p-8 max-w-sm w-full">
+            <h3 className="font-display font-bold text-xl">Delete thread?</h3>
+            <p className="font-body text-[14px] text-slate mt-2">
+              This will permanently delete the thread and all its replies.
+            </p>
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => setConfirmDeleteThread(false)}
+                className="font-ui text-[11px] font-semibold uppercase tracking-[0.2em] border border-ink/10 py-2.5 px-5 hover:bg-cream transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={deleteThread}
+                className="font-ui text-[11px] font-semibold uppercase tracking-[0.2em] bg-sienna text-warm-white py-2.5 px-5 hover:bg-terracotta transition-colors"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Delete reply confirmation */}
+      {confirmDeleteReply && (
+        <>
+          <div className="fixed inset-0 bg-charcoal/40 z-50" onClick={() => setConfirmDeleteReply(null)} />
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-parchment border border-ink/10 shadow-xl p-8 max-w-sm w-full">
+            <h3 className="font-display font-bold text-xl">Delete reply?</h3>
+            <p className="font-body text-[14px] text-slate mt-2">
+              This reply will be permanently removed.
+            </p>
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => setConfirmDeleteReply(null)}
+                className="font-ui text-[11px] font-semibold uppercase tracking-[0.2em] border border-ink/10 py-2.5 px-5 hover:bg-cream transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => deleteReply(confirmDeleteReply)}
+                className="font-ui text-[11px] font-semibold uppercase tracking-[0.2em] bg-sienna text-warm-white py-2.5 px-5 hover:bg-terracotta transition-colors"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   )
 }

@@ -172,6 +172,8 @@ function ThreadCard({ thread: t }: { thread: ThreadWithMeta }) {
         </div>
 
         <h3 className="font-display italic text-[19px] text-ink leading-snug group-hover:text-sienna transition-colors duration-150">
+          {t.is_pinned && <span className="font-ui text-[10px] uppercase tracking-[0.15em] text-olive not-italic mr-2">Pinned</span>}
+          {t.is_locked && <span className="font-ui text-[10px] uppercase tracking-[0.15em] text-brass not-italic mr-2">Locked</span>}
           {t.title}
         </h3>
       </Link>
@@ -508,8 +510,14 @@ export default function CommunityPage() {
 
   // Weekly prompt — find the most recent one
   const weeklyPrompt = threads.find((t) => t.is_weekly_prompt)
-  // Discussion threads (non-prompt)
-  const discussionThreads = threads.filter((t) => !t.is_weekly_prompt)
+  // Discussion threads (non-prompt), pinned first
+  const discussionThreads = threads
+    .filter((t) => !t.is_weekly_prompt)
+    .sort((a, b) => {
+      if (a.is_pinned && !b.is_pinned) return -1
+      if (!a.is_pinned && b.is_pinned) return 1
+      return 0
+    })
   // Apply tag filter
   const filtered = tagFilter === 'all'
     ? discussionThreads

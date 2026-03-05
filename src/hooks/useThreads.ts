@@ -15,6 +15,7 @@ export function useThreads(tagFilter?: string, typeFilter?: 'discussion' | 'prom
       const { data, error: err } = await supabase
         .from('threads')
         .select('*, author:profiles!author_id(*), replies(count), thread_reactions(*)')
+        .eq('is_hidden', false)
         .order('created_at', { ascending: false })
 
       if (cancelled) return
@@ -32,6 +33,10 @@ export function useThreads(tagFilter?: string, typeFilter?: 'discussion' | 'prom
         author_id: row.author_id as string,
         is_weekly_prompt: (row.is_weekly_prompt as boolean) ?? false,
         prompt_week: row.prompt_week as string | null,
+        featured_thread_position: (row.featured_thread_position as string | null) ?? null,
+        is_pinned: (row.is_pinned as boolean) ?? false,
+        is_locked: (row.is_locked as boolean) ?? false,
+        is_hidden: (row.is_hidden as boolean) ?? false,
         created_at: row.created_at as string,
         author: row.author as Profile,
         reply_count: ((row.replies as { count: number }[])?.[0]?.count) ?? 0,
@@ -98,6 +103,10 @@ export function useThread(id: string | undefined) {
         author_id: row.author_id as string,
         is_weekly_prompt: (row.is_weekly_prompt as boolean) ?? false,
         prompt_week: row.prompt_week as string | null,
+        featured_thread_position: (row.featured_thread_position as string | null) ?? null,
+        is_pinned: (row.is_pinned as boolean) ?? false,
+        is_locked: (row.is_locked as boolean) ?? false,
+        is_hidden: (row.is_hidden as boolean) ?? false,
         created_at: row.created_at as string,
         author: row.author as Profile,
         replies: (row.replies as (Reply & { author: Profile })[]) ?? [],

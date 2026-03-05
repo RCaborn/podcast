@@ -51,6 +51,14 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-4">
           {isLoggedIn ? (
             <>
+              {profile?.is_admin && (
+                <Link
+                  to="/admin"
+                  className="font-ui font-semibold uppercase text-xs tracking-[0.2em] text-terracotta hover:text-sienna transition-colors"
+                >
+                  Admin
+                </Link>
+              )}
               <Link
                 to={`/profile/${user.id}`}
                 className="font-ui font-semibold uppercase text-xs tracking-[0.2em] text-charcoal/70 hover:text-charcoal transition-colors"
@@ -137,20 +145,31 @@ export default function Navbar() {
           ))}
 
           {isLoggedIn ? (
-            <Link
-              to={`/profile/${user.id}`}
-              onClick={() => setMenuOpen(false)}
-              className="flex items-center gap-3 mt-2"
-            >
-              <Avatar
-                initials={profile?.avatar_initials ?? '??'}
-                color={mapAvatarColor(profile?.avatar_colour ?? null)}
-                size="sm"
-              />
-              <span className="font-ui font-semibold uppercase text-xs tracking-[0.2em] text-charcoal/70">
-                My Profile
-              </span>
-            </Link>
+            <>
+              {profile?.is_admin && (
+                <Link
+                  to="/admin"
+                  onClick={() => setMenuOpen(false)}
+                  className="font-ui font-semibold uppercase text-sm tracking-[0.2em] text-terracotta hover:text-sienna transition-colors"
+                >
+                  Admin
+                </Link>
+              )}
+              <Link
+                to={`/profile/${user.id}`}
+                onClick={() => setMenuOpen(false)}
+                className="flex items-center gap-3 mt-2"
+              >
+                <Avatar
+                  initials={profile?.avatar_initials ?? '??'}
+                  color={mapAvatarColor(profile?.avatar_colour ?? null)}
+                  size="sm"
+                />
+                <span className="font-ui font-semibold uppercase text-xs tracking-[0.2em] text-charcoal/70">
+                  My Profile
+                </span>
+              </Link>
+            </>
           ) : (
             <>
               <Link

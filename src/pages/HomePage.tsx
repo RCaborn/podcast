@@ -3,8 +3,7 @@ import { Link } from 'react-router-dom'
 import Eyebrow from '../components/ui/Eyebrow'
 import Tag from '../components/ui/Tag'
 import Avatar from '../components/ui/Avatar'
-import { useArticles } from '../hooks/useArticles'
-import { useThreads } from '../hooks/useThreads'
+import { useHomepageContent } from '../hooks/useHomepageContent'
 import { useMemberDirectory } from '../hooks/useMemberDirectory'
 import { usePageTitle } from '../hooks/usePageTitle'
 import { mapAvatarColor } from '../lib/avatarColor'
@@ -341,7 +340,7 @@ function OpinionPullQuote({ opinion, aside }: { opinion: Article | null; aside: 
             className="font-display italic leading-snug group-hover:text-sienna transition-colors"
             style={{ fontSize: 'clamp(20px, 3vw, 32px)' }}
           >
-            &ldquo;{opinion.excerpt}&rdquo;
+            &ldquo;{opinion.pullquote || opinion.excerpt}&rdquo;
           </p>
           <p className="font-ui text-[11px] uppercase tracking-wider text-slate mt-4">
             {opinion.author_name}
@@ -514,43 +513,23 @@ export default function HomePage() {
     return () => { if (meta) meta.content = '' }
   }, [])
 
-  const { articles, loading: articlesLoading } = useArticles()
-  const { threads, loading: threadsLoading } = useThreads()
+  const content = useHomepageContent()
 
-  if (articlesLoading || threadsLoading) {
+  if (content.loading) {
     return <FeedSkeleton />
   }
-
-  // Partition articles
-  const latestNewsletter = articles.find((a) => a.tag === 'Newsletter')
-  const featuredArticles = articles.filter((a) => a.is_featured && a.image_url)
-  const opinions = articles.filter((a) => a.tag === 'Opinion')
-  // Lead = first article (newest)
-  const lead = articles[0]
-  const sidebarArticles = articles.filter((a) => a.id !== lead?.id).slice(0, 3)
-
-  // Articles for trio and duo (excluding lead, featured, newsletter)
-  const usedIds = new Set([lead?.id, latestNewsletter?.id, ...featuredArticles.map((a) => a.id)])
-  const otherArticles = articles.filter((a) => !usedIds.has(a.id))
-  const trioArticles = otherArticles.slice(0, 3)
-  const duoArticles = otherArticles.slice(3, 5)
-
-  // Threads — prefer weekly prompt as the featured thread
-  const weeklyPrompt = threads.find((t) => t.is_weekly_prompt)
-  const firstThread = weeklyPrompt ?? threads[0] ?? null
-  const secondThread = threads.find((t) => t.id !== firstThread?.id) ?? null
 
   return (
     <>
       <CompactMasthead />
-      {lead && <LeadStorySidebar lead={lead} sidebar={sidebarArticles} />}
-      <ImageFeatureRow articles={featuredArticles} />
-      {latestNewsletter && <NewsletterStrip article={latestNewsletter} />}
-      <ArticleTrio articles={trioArticles} />
-      {firstThread && <CommunityThread thread={firstThread} />}
-      <OpinionPullQuote opinion={opinions[0] ?? null} aside={opinions[1] ?? null} />
-      <SecondCommunityStrip thread={secondThread} />
-      <BottomArticleDuo articles={duoArticles} />
+      {content.lead && <LeadStorySidebar lead={content.lead} sidebar={content.sidebar} />}
+      <ImageFeatureRow articles={content.imageFeatures} />
+      {content.newsletterStrip && <NewsletterStrip article={content.newsletterStrip} />}
+      <ArticleTrio articles={content.trio} />
+      {content.communityInline && <CommunityThread thread={content.communityInline} />}
+      <OpinionPullQuote opinion={content.opinionPullquote} aside={content.aside} />
+      <SecondCommunityStrip thread={content.communityStrip} />
+      <BottomArticleDuo articles={content.bottom} />
       <NewMemberTeaser />
       <JoinBanner />
     </>

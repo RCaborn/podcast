@@ -163,7 +163,7 @@ export default function ThreadPage() {
     )
   }
 
-  if (error || !thread) {
+  if (error || !thread || thread.is_hidden) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
         <p className="font-display text-2xl">Thread not found</p>
@@ -177,7 +177,7 @@ export default function ThreadPage() {
   const author = thread.author
   const authorName = author?.full_name ?? 'Anonymous'
   const shopName = author?.shop_name
-  const allReplies = [...thread.replies, ...optimisticReplies]
+  const allReplies = [...thread.replies.filter((r) => !r.is_hidden), ...optimisticReplies]
 
   async function handleReply(e: FormEvent) {
     e.preventDefault()
@@ -302,6 +302,14 @@ export default function ThreadPage() {
 
         {/* Reply form */}
         <div className="mt-12 pt-8 border-t border-stone">
+          {thread.is_locked ? (
+            <div className="bg-brass/10 border border-brass/30 p-4 text-center">
+              <p className="font-ui text-[11px] font-semibold uppercase tracking-[0.15em] text-brass">
+                This thread is locked — no new replies can be posted.
+              </p>
+            </div>
+          ) : (
+          <>
           <h3 className="font-ui text-xs font-semibold uppercase tracking-wider text-ink/50 mb-4">
             Reply
           </h3>
@@ -341,6 +349,8 @@ export default function ThreadPage() {
                 </Link>
               </div>
             </div>
+          )}
+          </>
           )}
         </div>
       </div>
