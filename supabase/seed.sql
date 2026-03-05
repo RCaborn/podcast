@@ -6,6 +6,41 @@
 -- them directly with deterministic UUIDs so foreign keys work.
 -- ============================================================
 
+-- ---------- auth stub users ----------
+-- Supabase requires auth.users rows to exist before profiles
+-- (profiles.id references auth.users on delete cascade).
+-- We insert minimal rows with deterministic UUIDs so the seed
+-- is self-contained. Passwords are bcrypt hashes of "password123".
+
+insert into auth.users (id, instance_id, email, encrypted_password, email_confirmed_at, aud, role, raw_app_meta_data, raw_user_meta_data, created_at, updated_at) values
+(
+  '11111111-1111-1111-1111-111111111111',
+  '00000000-0000-0000-0000-000000000000',
+  'rosa@example.com',
+  '$2a$10$Q7RHDX5m1LS0YEKfBsTd8eYi1Fvv0XaGn0vG3jPzJQxOKqHB9UJXe',
+  now(), 'authenticated', 'authenticated',
+  '{"provider":"email","providers":["email"]}',
+  '{}', now(), now()
+),
+(
+  '22222222-2222-2222-2222-222222222222',
+  '00000000-0000-0000-0000-000000000000',
+  'marcus@example.com',
+  '$2a$10$Q7RHDX5m1LS0YEKfBsTd8eYi1Fvv0XaGn0vG3jPzJQxOKqHB9UJXe',
+  now(), 'authenticated', 'authenticated',
+  '{"provider":"email","providers":["email"]}',
+  '{}', now(), now()
+),
+(
+  '33333333-3333-3333-3333-333333333333',
+  '00000000-0000-0000-0000-000000000000',
+  'fiona@example.com',
+  '$2a$10$Q7RHDX5m1LS0YEKfBsTd8eYi1Fvv0XaGn0vG3jPzJQxOKqHB9UJXe',
+  now(), 'authenticated', 'authenticated',
+  '{"provider":"email","providers":["email"]}',
+  '{}', now(), now()
+);
+
 -- ---------- profiles ----------
 
 insert into public.profiles (id, full_name, shop_name, location, bio, avatar_initials, avatar_colour) values

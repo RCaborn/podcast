@@ -24,7 +24,7 @@ Run the schema migration and seed data against your Supabase project:
 
 1. Go to your Supabase dashboard → SQL Editor
 2. Run `supabase/migrations/001_initial_schema.sql` to create tables and RLS policies
-3. Run `supabase/seed.sql` to populate sample articles, threads, and user profiles
+3. Run `supabase/seed.sql` to populate sample data (this inserts stub `auth.users` rows first, then profiles, articles, threads, and replies)
 
 Or via the Supabase CLI:
 
