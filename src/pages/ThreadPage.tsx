@@ -1,25 +1,25 @@
 import { useState, type FormEvent } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { useThread } from '../hooks/useThreads'
+import { useThread, useToggleReaction } from '../hooks/useThreads'
 import { useAuth } from '../context/AuthContext'
 import { usePageTitle } from '../hooks/usePageTitle'
 import { supabase } from '../lib/supabase'
 import { mapAvatarColor } from '../lib/avatarColor'
-import Tag from '../components/ui/Tag'
 import Avatar from '../components/ui/Avatar'
 import Button from '../components/ui/Button'
-import type { Profile, Reply } from '../types/database'
+import type { Profile, Reply, ThreadReaction } from '../types/database'
 
 /* ------------------------------------------------------------------ */
 /*  Helpers                                                            */
 /* ------------------------------------------------------------------ */
 
-const categoryLabels: Record<string, string> = {
-  delis: 'Delis',
-  butchers: 'Butchers',
-  cheesemongers: 'Cheesemongers',
-  'farm-shops': 'Farm Shops',
-  general: 'General',
+const tradeTypeLabels: Record<string, string> = {
+  deli: 'Deli',
+  butcher: 'Butcher',
+  cheesemonger: 'Cheesemonger',
+  'farm-shop': 'Farm Shop',
+  grocer: 'Grocer',
+  other: 'Other',
 }
 
 function timeAgo(dateStr: string): string {
@@ -33,6 +33,88 @@ function timeAgo(dateStr: string): string {
   if (days < 30) return `${days}d ago`
   const months = Math.floor(days / 30)
   return `${months}mo ago`
+}
+
+function AuthorPhoto({ author, size = 36 }: { author: Profile | null; size?: number }) {
+  if (!author) return null
+  if (author.face_photo_url) {
+    return (
+      <img
+        src={author.face_photo_url}
+        alt=""
+        className="rounded-full object-cover"
+        style={{ width: size, height: size }}
+        loading="lazy"
+      />
+    )
+  }
+  return (
+    <Avatar
+      initials={author.avatar_initials ?? '??'}
+      color={mapAvatarColor(author.avatar_colour ?? null)}
+      size={size >= 48 ? 'md' : 'sm'}
+    />
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/*  Reaction Bar                                                       */
+/* ------------------------------------------------------------------ */
+
+function ReactionBar({
+  threadId,
+  reactions: initialReactions,
+}: {
+  threadId: string
+  reactions: ThreadReaction[]
+}) {
+  const { user } = useAuth()
+  const { toggle } = useToggleReaction()
+  const [reactions, setReactions] = useState(initialReactions)
+
+  const sameHereCount = reactions.filter((r) => r.type === 'same-here').length
+  const usefulCount = reactions.filter((r) => r.type === 'useful').length
+  const userSameHere = user ? reactions.some((r) => r.type === 'same-here' && r.author_id === user.id) : false
+  const userUseful = user ? reactions.some((r) => r.type === 'useful' && r.author_id === user.id) : false
+
+  async function handleReaction(type: 'same-here' | 'useful') {
+    if (!user) return
+    const added = await toggle(threadId, user.id, type)
+    if (added) {
+      setReactions((prev) => [...prev, { id: crypto.randomUUID(), thread_id: threadId, author_id: user.id, type, created_at: new Date().toISOString() }])
+    } else {
+      setReactions((prev) => prev.filter((r) => !(r.type === type && r.author_id === user.id)))
+    }
+  }
+
+  return (
+    <div className="flex items-center gap-3 mt-8 mb-2">
+      <button
+        onClick={() => handleReaction('same-here')}
+        disabled={!user}
+        className={`font-ui text-[11px] uppercase tracking-[0.15em] border py-2 px-4 transition-colors ${
+          userSameHere
+            ? 'bg-olive/10 text-olive border-olive/30'
+            : 'border-ink/15 text-slate hover:border-olive/30'
+        } ${!user ? 'opacity-50 cursor-not-allowed' : ''}`}
+        title={!user ? 'Join to react' : undefined}
+      >
+        Same here {sameHereCount > 0 && `(${sameHereCount})`}
+      </button>
+      <button
+        onClick={() => handleReaction('useful')}
+        disabled={!user}
+        className={`font-ui text-[11px] uppercase tracking-[0.15em] border py-2 px-4 transition-colors ${
+          userUseful
+            ? 'bg-brass/10 text-brass border-brass/30'
+            : 'border-ink/15 text-slate hover:border-brass/30'
+        } ${!user ? 'opacity-50 cursor-not-allowed' : ''}`}
+        title={!user ? 'Join to react' : undefined}
+      >
+        Useful {usefulCount > 0 && `(${usefulCount})`}
+      </button>
+    </div>
+  )
 }
 
 /* ------------------------------------------------------------------ */
@@ -60,7 +142,7 @@ export default function ThreadPage() {
           <div className="skeleton h-8 w-full mt-5" />
           <div className="skeleton h-8 w-2/3 mt-2" />
           <div className="flex items-center gap-3 mt-6">
-            <div className="skeleton w-10 h-10 rounded-full" />
+            <div className="skeleton w-12 h-12 rounded-full" />
             <div className="skeleton h-3 w-40" />
           </div>
           <div className="w-full h-[2px] bg-stone mt-10" />
@@ -95,7 +177,6 @@ export default function ThreadPage() {
   const author = thread.author
   const authorName = author?.full_name ?? 'Anonymous'
   const shopName = author?.shop_name
-
   const allReplies = [...thread.replies, ...optimisticReplies]
 
   async function handleReply(e: FormEvent) {
@@ -140,59 +221,75 @@ export default function ThreadPage() {
           &larr; Back to The Counter
         </Link>
 
-        {/* Original question */}
+        {/* Thread header */}
         <div className="mb-10">
-          <Tag variant="outlined" contentType="Community">{categoryLabels[thread.category] ?? thread.category}</Tag>
+          {thread.tags.length > 0 && (
+            <div className="flex gap-1.5 mb-3">
+              {thread.tags.map((tag) => (
+                <span key={tag} className="font-ui text-[10px] uppercase tracking-[0.15em] border border-ink/15 text-slate px-2 py-0.5">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
 
-          <h1 className="font-display italic text-2xl sm:text-3xl mt-5 leading-snug">
+          <h1 className="font-display italic text-2xl sm:text-3xl leading-snug">
             {thread.title}
           </h1>
 
-          <div className="flex items-center gap-3 mt-6">
-            <Avatar
-              initials={author?.avatar_initials ?? '??'}
-              color={mapAvatarColor(author?.avatar_colour ?? null)}
-              size="md"
-            />
+          <Link to={`/profile/${thread.author_id}`} className="flex items-center gap-3 mt-6 group">
+            <AuthorPhoto author={author} size={48} />
             <div>
-              <p className="font-ui text-[11px] font-semibold uppercase tracking-wider text-charcoal/70">
+              <p className="font-ui text-[11px] font-semibold uppercase tracking-[0.15em] text-ink/70 group-hover:text-ink transition-colors">
                 {authorName}
-                {shopName && <> &middot; {shopName}</>}
               </p>
-              <p className="font-ui text-[11px] uppercase tracking-wider text-charcoal/40">
+              <p className="font-ui text-[11px] uppercase tracking-[0.15em] text-slate">
+                {shopName && <>{shopName}</>}
+                {author?.region && <> &middot; {author.region}</>}
+                {author?.trade_type && <> &middot; {tradeTypeLabels[author.trade_type] ?? author.trade_type}</>}
+                {author?.years_trading && <> &middot; {author.years_trading} yrs trading</>}
+              </p>
+              <p className="font-ui text-[11px] uppercase tracking-wider text-ink/40">
                 {timeAgo(thread.created_at)}
               </p>
             </div>
-          </div>
+          </Link>
         </div>
 
+        {/* Reaction bar */}
+        <ReactionBar threadId={thread.id} reactions={thread.reactions ?? []} />
+
         {/* Divider */}
-        <div className="w-full h-[2px] bg-terracotta" />
+        <div className="w-full h-[2px] bg-terracotta mt-4" />
 
         {/* Replies */}
         {allReplies.length > 0 ? (
-          <div className="mt-8 space-y-8">
+          <div className="mt-8 space-y-0">
             {allReplies.map((reply) => {
               const rAuthor = reply.author
               const rName = rAuthor?.full_name ?? 'Anonymous'
               const rShop = rAuthor?.shop_name
 
               return (
-                <div key={reply.id} className="flex gap-4">
-                  <Avatar
-                    initials={rAuthor?.avatar_initials ?? '??'}
-                    color={mapAvatarColor(rAuthor?.avatar_colour ?? null)}
-                    size="sm"
-                    className="shrink-0 mt-1"
-                  />
-                  <div className="min-w-0 bg-cream p-4 flex-1">
-                    <p className="font-ui text-[11px] font-semibold uppercase tracking-wider text-charcoal/50">
+                <div key={reply.id} className="flex gap-4 py-5 bg-cream px-4 border-b border-ink/8 last:border-b-0">
+                  <Link to={`/profile/${reply.author_id}`} className="shrink-0 mt-1">
+                    <AuthorPhoto author={rAuthor} size={36} />
+                  </Link>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-ui text-[11px] font-semibold uppercase tracking-[0.15em] text-ink/70">
                       {rName}
-                      {rShop && <> &middot; {rShop}</>}
-                      <span className="font-normal text-charcoal/30 ml-2">{timeAgo(reply.created_at)}</span>
                     </p>
-                    <p className="font-body text-sm text-charcoal/80 mt-2 leading-relaxed">
+                    {rShop && (
+                      <p className="font-ui text-[11px] uppercase tracking-[0.15em] text-slate">
+                        {rShop}
+                        {rAuthor?.region && <> &middot; {rAuthor.region}</>}
+                      </p>
+                    )}
+                    <p className="font-body text-sm text-slate mt-2 leading-relaxed" style={{ lineHeight: 1.7 }}>
                       {reply.content}
+                    </p>
+                    <p className="font-body text-[11px] text-slate/50 mt-2" style={{ fontWeight: 300 }}>
+                      {timeAgo(reply.created_at)}
                     </p>
                   </div>
                 </div>
@@ -200,12 +297,12 @@ export default function ThreadPage() {
             })}
           </div>
         ) : (
-          <p className="font-body text-charcoal/50 mt-8">No replies yet. Be the first to respond.</p>
+          <p className="font-body text-ink/50 mt-8">No replies yet. Be the first to respond.</p>
         )}
 
         {/* Reply form */}
         <div className="mt-12 pt-8 border-t border-stone">
-          <h3 className="font-ui text-xs font-semibold uppercase tracking-wider text-charcoal/50 mb-4">
+          <h3 className="font-ui text-xs font-semibold uppercase tracking-wider text-ink/50 mb-4">
             Reply
           </h3>
 
@@ -215,15 +312,15 @@ export default function ThreadPage() {
                 rows={4}
                 value={replyContent}
                 onChange={(e) => setReplyContent(e.target.value)}
-                placeholder="Share your thoughts…"
-                className="w-full font-body text-sm p-4 border border-charcoal/20 bg-cream text-charcoal placeholder:text-charcoal/30 resize-y focus:border-terracotta focus:ring-1 focus:ring-terracotta focus:outline-none"
+                placeholder="Share your thoughts..."
+                className="w-full font-body text-sm p-4 border border-ink/20 bg-cream text-ink placeholder:text-ink/30 resize-y focus:border-terracotta focus:ring-1 focus:ring-terracotta focus:outline-none"
               />
               {replyError && (
                 <p className="font-body text-sm text-red-600 mt-2">{replyError}</p>
               )}
               <div className="mt-3">
                 <Button type="submit" disabled={posting || !replyContent.trim()}>
-                  {posting ? 'Posting…' : 'Post Reply'}
+                  {posting ? 'Posting...' : 'Post Reply'}
                 </Button>
               </div>
             </form>
@@ -233,7 +330,7 @@ export default function ThreadPage() {
                 disabled
                 rows={4}
                 placeholder="Join the community to reply"
-                className="w-full font-body text-sm p-4 border border-charcoal/20 bg-cream text-charcoal placeholder:text-charcoal/30 resize-y disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full font-body text-sm p-4 border border-ink/20 bg-cream text-ink placeholder:text-ink/30 resize-y disabled:opacity-50 disabled:cursor-not-allowed"
               />
               <div className="flex items-center gap-4 mt-3">
                 <Link

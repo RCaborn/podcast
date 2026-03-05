@@ -43,7 +43,7 @@ insert into auth.users (id, instance_id, email, encrypted_password, email_confir
 
 -- ---------- profiles ----------
 
-insert into public.profiles (id, full_name, shop_name, location, bio, avatar_initials, avatar_colour) values
+insert into public.profiles (id, full_name, shop_name, location, bio, avatar_initials, avatar_colour, trade_type, region, years_trading, tagline, shop_photo_url, shop_photo_caption) values
 (
   '11111111-1111-1111-1111-111111111111',
   'Rosa Capaldi',
@@ -51,7 +51,13 @@ insert into public.profiles (id, full_name, shop_name, location, bio, avatar_ini
   'Edinburgh',
   'Third-generation Italian-Scot running an Edinburgh institution since 2012. Obsessed with nduja, natural wine, and keeping the neighbourhood fed properly.',
   'RC',
-  'terracotta'
+  'terracotta',
+  'deli',
+  'Lothian',
+  12,
+  'Family deli, Edinburgh Old Town. Nduja, natural wine, and too many opinions.',
+  'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=800&q=80',
+  'The counter at Rosa''s Deli'
 ),
 (
   '22222222-2222-2222-2222-222222222222',
@@ -60,7 +66,13 @@ insert into public.profiles (id, full_name, shop_name, location, bio, avatar_ini
   'Bristol',
   'Former chef turned shopkeeper. Opened The Corner Larder in Bedminster in 2019. Sourdough evangelist. Believes every neighbourhood deserves a proper counter.',
   'MW',
-  'olive'
+  'olive',
+  'deli',
+  'West of England',
+  4,
+  'Bristol deli with a focus on South West producers.',
+  'https://images.unsplash.com/photo-1567337710282-00832b415979?w=800&q=80',
+  'Morning prep at The Corner Larder'
 ),
 (
   '33333333-3333-3333-3333-333333333333',
@@ -69,7 +81,13 @@ insert into public.profiles (id, full_name, shop_name, location, bio, avatar_ini
   'Hebden Bridge',
   'Runs a farmshop-meets-deli in the Calder Valley with her daughter Nell. Champions small Yorkshire producers and refuses to stock anything that travels more than fifty miles.',
   'FH',
-  'sienna'
+  'sienna',
+  'farm-shop',
+  'West Yorkshire',
+  11,
+  'Third-generation farm shop. Yorkshire producers only.',
+  'https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=800&q=80',
+  'The cheese room, stocked for Christmas'
 );
 
 -- ---------- articles ----------
@@ -180,11 +198,24 @@ insert into public.articles (title, slug, excerpt, body, tag, author_name, autho
 
 -- ---------- threads ----------
 
-insert into public.threads (id, title, category, author_id, created_at) values
+insert into public.threads (id, title, category, tags, is_weekly_prompt, prompt_week, author_id, created_at) values
+(
+  'dddddddd-dddd-dddd-dddd-dddddddddddd',
+  'This week: have you changed your range in the last year, and what drove the decision?',
+  null,
+  ARRAY['range', 'buying', 'weekly-prompt'],
+  true,
+  '2026-W10',
+  '11111111-1111-1111-1111-111111111111',
+  '2026-03-03T09:00:00Z'
+),
 (
   'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
   'What''s the one product you''d never drop from your counter, no matter what the margin?',
   'delis',
+  ARRAY['range', 'margins'],
+  false,
+  null,
   '11111111-1111-1111-1111-111111111111',
   '2026-02-25T14:30:00Z'
 ),
@@ -192,6 +223,9 @@ insert into public.threads (id, title, category, author_id, created_at) values
   'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
   'Anyone else finding it impossible to get good British charcuterie reliably?',
   'butchers',
+  ARRAY['suppliers', 'equipment'],
+  false,
+  null,
   '22222222-2222-2222-2222-222222222222',
   '2026-02-20T10:15:00Z'
 ),
@@ -199,6 +233,9 @@ insert into public.threads (id, title, category, author_id, created_at) values
   'cccccccc-cccc-cccc-cccc-cccccccccccc',
   'How do you handle the "it''s cheaper in Tesco" conversation?',
   'general',
+  ARRAY['margins', 'first-year'],
+  false,
+  null,
   '33333333-3333-3333-3333-333333333333',
   '2026-02-18T16:45:00Z'
 );
@@ -272,4 +309,56 @@ insert into public.replies (thread_id, author_id, content, created_at) values
   '22222222-2222-2222-2222-222222222222',
   'Honestly? I think the best response is no response. If someone''s comparing you to a supermarket on price, they''re not your customer yet. Emphasis on yet. Keep being brilliant and they''ll come round or they won''t. Either way, you can''t win that argument at the till.',
   '2026-02-19T09:30:00Z'
+);
+
+-- ---------- notices ----------
+
+insert into public.notices (author_id, type, title, body, location, contact_hint) values
+(
+  '22222222-2222-2222-2222-222222222222',
+  'supplier-rec',
+  'Anyone used Cannon & Cannon for British charcuterie?',
+  'Looking at switching our charcuterie supplier. We''re currently using a big national distributor but want to go more regional / artisan. Has anyone traded with Cannon & Cannon or similar? Interested in margins, minimum orders, reliability.',
+  'Bristol',
+  'Reply on this thread or DM'
+),
+(
+  '22222222-2222-2222-2222-222222222222',
+  'staff-wanted',
+  'Part-time cheesemonger wanted — Bristol, 2 days/week',
+  'Looking for someone with cheese knowledge (or genuine enthusiasm to learn) for two days a week, Fri/Sat. The Corner Larder is a small team, so personality and reliability matter more than a CV. Happy to train the right person.',
+  'Bristol',
+  'Reply below or email via profile page'
+),
+(
+  '33333333-3333-3333-3333-333333333333',
+  'equipment-for-sale',
+  'Berkel flywheel slicer — needs restoration, free to collect',
+  'We''ve got a beautiful old Berkel Model 9 that needs some love. Works but the blade guard is damaged. Free to anyone who''ll actually restore it rather than turn it into a doorstop. Collection from Hebden Bridge.',
+  'Hebden Bridge',
+  'Reply below'
+);
+
+-- ---------- thread reactions ----------
+
+insert into public.thread_reactions (thread_id, author_id, type) values
+(
+  'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+  '22222222-2222-2222-2222-222222222222',
+  'same-here'
+),
+(
+  'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+  '33333333-3333-3333-3333-333333333333',
+  'useful'
+),
+(
+  'cccccccc-cccc-cccc-cccc-cccccccccccc',
+  '11111111-1111-1111-1111-111111111111',
+  'same-here'
+),
+(
+  'cccccccc-cccc-cccc-cccc-cccccccccccc',
+  '22222222-2222-2222-2222-222222222222',
+  'same-here'
 );

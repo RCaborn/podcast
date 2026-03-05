@@ -70,6 +70,8 @@ Counter Culture is a podcast community platform built with React, TypeScript, Vi
 | Utility            | Path                          | Purpose                              |
 |--------------------|-------------------------------|--------------------------------------|
 | `mapAvatarColor`   | `src/lib/avatarColor.ts`      | Maps DB avatar_colour to Avatar prop |
+| `uploadFacePhoto`  | `src/lib/storage.ts`          | Upload face photo to Supabase Storage |
+| `uploadShopPhoto`  | `src/lib/storage.ts`          | Upload shop photo to Supabase Storage |
 
 ## Routes
 
@@ -81,6 +83,7 @@ Counter Culture is a podcast community platform built with React, TypeScript, Vi
 | `/newsletter/:slug`      | Newsletter issue      |
 | `/community`             | Community / forums    |
 | `/community/:threadId`   | Thread detail         |
+| `/directory`             | Member directory      |
 | `/join`                  | Sign-up               |
 | `/login`                 | Log-in                |
 | `/profile/:userId`       | User profile          |

@@ -7,9 +7,9 @@ import CommunityPage from './pages/CommunityPage'
 import ThreadPage from './pages/ThreadPage'
 import JoinPage from './pages/JoinPage'
 import LoginPage from './pages/LoginPage'
+import ProfilePage from './pages/ProfilePage'
+import DirectoryPage from './pages/DirectoryPage'
 import NotFoundPage from './pages/NotFoundPage'
-
-const Placeholder = () => null
 
 export const router = createBrowserRouter([
   {
@@ -23,7 +23,8 @@ export const router = createBrowserRouter([
       { path: '/community/:threadId', element: <ThreadPage /> },
       { path: '/join', element: <JoinPage /> },
       { path: '/login', element: <LoginPage /> },
-      { path: '/profile/:userId', element: <Placeholder /> },
+      { path: '/profile/:userId', element: <ProfilePage /> },
+      { path: '/directory', element: <DirectoryPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },

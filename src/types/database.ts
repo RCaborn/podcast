@@ -1,5 +1,5 @@
 /* ------------------------------------------------------------------ */
-/*  Row types matching supabase/migrations/001_initial_schema.sql      */
+/*  Row types matching supabase/migrations                             */
 /* ------------------------------------------------------------------ */
 
 export interface Profile {
@@ -7,9 +7,16 @@ export interface Profile {
   full_name: string
   shop_name: string | null
   location: string | null
+  region: string | null
+  trade_type: 'deli' | 'butcher' | 'cheesemonger' | 'farm-shop' | 'grocer' | 'other' | null
+  years_trading: number | null
+  tagline: string | null
   bio: string | null
   avatar_initials: string | null
   avatar_colour: 'olive' | 'terracotta' | 'charcoal' | 'sienna' | 'brass' | null
+  face_photo_url: string | null
+  shop_photo_url: string | null
+  shop_photo_caption: string | null
   created_at: string
 }
 
@@ -34,8 +41,11 @@ export interface Article {
 export interface Thread {
   id: string
   title: string
-  category: 'delis' | 'butchers' | 'cheesemongers' | 'farm-shops' | 'general'
+  category: string | null
+  tags: string[]
   author_id: string
+  is_weekly_prompt: boolean
+  prompt_week: string | null
   created_at: string
 }
 
@@ -47,6 +57,27 @@ export interface Reply {
   created_at: string
 }
 
+export interface Notice {
+  id: string
+  author_id: string
+  type: 'supplier-rec' | 'equipment-for-sale' | 'staff-wanted' | 'other'
+  title: string
+  body: string
+  location: string | null
+  contact_hint: string | null
+  expires_at: string | null
+  created_at: string
+  author?: Profile
+}
+
+export interface ThreadReaction {
+  id: string
+  thread_id: string
+  author_id: string
+  type: 'same-here' | 'useful'
+  created_at: string
+}
+
 /* ------------------------------------------------------------------ */
 /*  Composite / joined types used by hooks                             */
 /* ------------------------------------------------------------------ */
@@ -54,9 +85,11 @@ export interface Reply {
 export interface ThreadWithMeta extends Thread {
   reply_count: number
   author: Profile
+  reactions?: ThreadReaction[]
 }
 
 export interface ThreadDetail extends Thread {
   author: Profile
   replies: (Reply & { author: Profile })[]
+  reactions?: ThreadReaction[]
 }

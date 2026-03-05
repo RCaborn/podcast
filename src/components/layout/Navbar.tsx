@@ -10,12 +10,13 @@ const navLinks = [
   { to: '/articles/latest', label: 'Articles' },
   { to: '/newsletter', label: 'Newsletter' },
   { to: '/community', label: 'Community' },
+  { to: '/directory', label: 'Directory' },
 ]
 
 const linkClass =
-  'font-ui font-semibold uppercase text-sm tracking-[0.2em] text-charcoal/70 hover:text-charcoal transition-colors'
+  'font-ui font-semibold uppercase text-sm tracking-[0.2em] text-charcoal/70 hover:text-charcoal transition-colors pb-1'
 const activeLinkClass =
-  'font-ui font-semibold uppercase text-sm tracking-[0.2em] text-charcoal transition-colors'
+  'font-ui font-semibold uppercase text-sm tracking-[0.2em] text-terracotta transition-colors pb-1 border-b-2 border-terracotta'
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)

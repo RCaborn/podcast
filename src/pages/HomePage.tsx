@@ -5,6 +5,7 @@ import Tag from '../components/ui/Tag'
 import Avatar from '../components/ui/Avatar'
 import { useArticles } from '../hooks/useArticles'
 import { useThreads } from '../hooks/useThreads'
+import { useMemberDirectory } from '../hooks/useMemberDirectory'
 import { usePageTitle } from '../hooks/usePageTitle'
 import { mapAvatarColor } from '../lib/avatarColor'
 import type { Article, ThreadWithMeta } from '../types/database'
@@ -12,14 +13,6 @@ import type { Article, ThreadWithMeta } from '../types/database'
 /* ------------------------------------------------------------------ */
 /*  Helpers                                                            */
 /* ------------------------------------------------------------------ */
-
-const categoryLabels: Record<string, string> = {
-  delis: 'Delis',
-  butchers: 'Butchers',
-  cheesemongers: 'Cheesemongers',
-  'farm-shops': 'Farm Shops',
-  general: 'General',
-}
 
 function articleHref(a: Article) {
   return a.tag === 'Newsletter' ? `/newsletter/${a.slug}` : `/articles/${a.slug}`
@@ -259,6 +252,8 @@ function ArticleTrio({ articles }: { articles: Article[] }) {
 /* ------------------------------------------------------------------ */
 
 function CommunityThread({ thread }: { thread: ThreadWithMeta }) {
+  const isPrompt = thread.is_weekly_prompt
+
   return (
     <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
       <div className="flex gap-6">
@@ -268,14 +263,20 @@ function CommunityThread({ thread }: { thread: ThreadWithMeta }) {
             className="font-ui text-xs font-bold uppercase tracking-[0.2em] text-olive border-r-2 border-olive pr-3"
             style={{ writingMode: 'vertical-rl' }}
           >
-            Community
+            {isPrompt ? 'This Week' : 'Community'}
           </span>
         </div>
 
         <div className="flex-1">
-          <Tag variant="outlined" contentType="Community" className="text-[10px]">
-            {categoryLabels[thread.category] ?? thread.category}
-          </Tag>
+          {isPrompt ? (
+            <span className="font-ui text-[10px] font-semibold uppercase tracking-[0.28em] text-terracotta">
+              Weekly Prompt
+            </span>
+          ) : (
+            <Tag variant="outlined" contentType="Community" className="text-[10px]">
+              {thread.tags?.[0] ?? thread.category ?? 'Community'}
+            </Tag>
+          )}
 
           <p className="font-display italic text-xl sm:text-2xl mt-4 leading-snug max-w-lg">
             &ldquo;{thread.title}&rdquo;
@@ -422,7 +423,39 @@ function BottomArticleDuo({ articles }: { articles: Article[] }) {
 }
 
 /* ------------------------------------------------------------------ */
-/*  10. Join Banner                                                    */
+/*  10. New Member Teaser                                              */
+/* ------------------------------------------------------------------ */
+
+function NewMemberTeaser() {
+  const { members } = useMemberDirectory()
+
+  if (members.length === 0) return null
+
+  return (
+    <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+      <Link to="/directory" className="flex items-center gap-4 group">
+        <div className="flex -space-x-2">
+          {members.slice(0, 3).map((m) => (
+            <img
+              key={m.id}
+              src={m.shop_photo_url ?? ''}
+              alt=""
+              className="w-12 h-12 object-cover"
+              loading="lazy"
+            />
+          ))}
+        </div>
+        <p className="font-ui text-xs text-slate group-hover:text-ink transition-colors">
+          {members.length} {members.length === 1 ? 'independent has' : 'independents have'} joined.{' '}
+          <span className="text-terracotta">View the directory &rarr;</span>
+        </p>
+      </Link>
+    </section>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/*  11. Join Banner                                                    */
 /* ------------------------------------------------------------------ */
 
 function JoinBanner() {
@@ -488,9 +521,10 @@ export default function HomePage() {
   const trioArticles = otherArticles.slice(0, 3)
   const duoArticles = otherArticles.slice(3, 5)
 
-  // Threads
-  const firstThread = threads[0] ?? null
-  const secondThread = threads.length > 1 ? threads[1] : null
+  // Threads — prefer weekly prompt as the featured thread
+  const weeklyPrompt = threads.find((t) => t.is_weekly_prompt)
+  const firstThread = weeklyPrompt ?? threads[0] ?? null
+  const secondThread = threads.find((t) => t.id !== firstThread?.id) ?? null
 
   return (
     <>
@@ -503,6 +537,7 @@ export default function HomePage() {
       <OpinionPullQuote opinion={opinions[0] ?? null} aside={opinions[1] ?? null} />
       <SecondCommunityStrip thread={secondThread} />
       <BottomArticleDuo articles={duoArticles} />
+      <NewMemberTeaser />
       <JoinBanner />
     </>
   )
