@@ -339,6 +339,151 @@ insert into public.notices (author_id, type, title, body, location, contact_hint
   'Reply below'
 );
 
+-- ---------- display-only directory profiles ----------
+-- These are seed-only profiles for the /directory page.
+-- Minimal auth stubs required to satisfy the profiles FK constraint.
+
+insert into auth.users (id, instance_id, email, encrypted_password, email_confirmed_at, aud, role, raw_app_meta_data, raw_user_meta_data, created_at, updated_at) values
+(
+  '44444444-4444-4444-4444-444444444444',
+  '00000000-0000-0000-0000-000000000000',
+  'tom@example.com',
+  '$2a$10$Q7RHDX5m1LS0YEKfBsTd8eYi1Fvv0XaGn0vG3jPzJQxOKqHB9UJXe',
+  now(), 'authenticated', 'authenticated',
+  '{"provider":"email","providers":["email"]}',
+  '{}', now(), now()
+),
+(
+  '55555555-5555-5555-5555-555555555555',
+  '00000000-0000-0000-0000-000000000000',
+  'nadia@example.com',
+  '$2a$10$Q7RHDX5m1LS0YEKfBsTd8eYi1Fvv0XaGn0vG3jPzJQxOKqHB9UJXe',
+  now(), 'authenticated', 'authenticated',
+  '{"provider":"email","providers":["email"]}',
+  '{}', now(), now()
+),
+(
+  '66666666-6666-6666-6666-666666666666',
+  '00000000-0000-0000-0000-000000000000',
+  'duncan@example.com',
+  '$2a$10$Q7RHDX5m1LS0YEKfBsTd8eYi1Fvv0XaGn0vG3jPzJQxOKqHB9UJXe',
+  now(), 'authenticated', 'authenticated',
+  '{"provider":"email","providers":["email"]}',
+  '{}', now(), now()
+);
+
+insert into public.profiles (id, full_name, shop_name, location, bio, avatar_initials, avatar_colour, trade_type, region, years_trading, tagline, face_photo_url, shop_photo_url, shop_photo_caption) values
+(
+  '44444444-4444-4444-4444-444444444444',
+  'Tom Priestley',
+  'Priestley & Son',
+  'Ludlow',
+  'Fourth-generation butcher in Ludlow. Tom took over from his dad in 2008 and hasn''t changed the recipe for their pork pies since. Sources everything from farms within twenty miles and still does his own slaughtering on Tuesdays.',
+  'TP',
+  'charcoal',
+  'butcher',
+  'Shropshire',
+  18,
+  'Ludlow butcher. Four generations, same pork pie recipe.',
+  NULL,
+  'https://images.unsplash.com/photo-1615937657715-bc7b4b7962c1?w=800&q=80',
+  'The charcuterie rail at Priestley & Son, Ludlow'
+),
+(
+  '55555555-5555-5555-5555-555555555555',
+  'Nadia Karim',
+  'The Saltbox',
+  'Margate',
+  'Nadia left restaurant kitchens in 2021 to open a grocer on the Old Town high street. The Saltbox stocks Middle Eastern storecupboard staples alongside Kent-grown fruit and veg. She makes her own dukkah and it outsells everything else in the shop.',
+  'NK',
+  'brass',
+  'grocer',
+  'Kent',
+  5,
+  'Margate grocer. Kent veg, Middle Eastern staples, homemade dukkah.',
+  NULL,
+  'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=800&q=80',
+  'Morning deliveries at The Saltbox, Margate'
+),
+(
+  '66666666-6666-6666-6666-666666666666',
+  'Duncan Greig',
+  'Greig''s Cheese',
+  'Bury St Edmunds',
+  'Runs a tiny cheesemonger on Abbeygate Street with his partner Liz. Duncan trained at Neal''s Yard before going solo in 2017. Keeps a maximum of forty cheeses at any time and knows the maker behind every single one.',
+  'DG',
+  'sienna',
+  'cheesemonger',
+  'Suffolk',
+  9,
+  'Forty cheeses, max. Every one from someone we know by name.',
+  NULL,
+  'https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=800&q=80',
+  'The counter at Greig''s Cheese, Bury St Edmunds'
+);
+
+-- Threads for the new directory profiles
+
+insert into public.threads (id, title, category, tags, is_weekly_prompt, prompt_week, author_id, created_at) values
+(
+  'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee',
+  'Butchers: how are you handling the rising cost of offal?',
+  'butchers',
+  ARRAY['margins', 'suppliers'],
+  false,
+  null,
+  '44444444-4444-4444-4444-444444444444',
+  '2026-02-22T11:00:00Z'
+),
+(
+  'ffffffff-ffff-ffff-ffff-ffffffffffff',
+  'Best way to introduce customers to ingredients they''ve never cooked with?',
+  'general',
+  ARRAY['range', 'first-year'],
+  false,
+  null,
+  '55555555-5555-5555-5555-555555555555',
+  '2026-02-16T09:30:00Z'
+),
+(
+  '77777777-7777-7777-7777-777777777777',
+  'Affinage at home — anyone doing their own ageing in a small shop?',
+  'cheesemongers',
+  ARRAY['equipment', 'range'],
+  false,
+  null,
+  '66666666-6666-6666-6666-666666666666',
+  '2026-02-12T14:15:00Z'
+);
+
+-- Notices for the new directory profiles
+
+insert into public.notices (author_id, type, title, body, location, contact_hint) values
+(
+  '44444444-4444-4444-4444-444444444444',
+  'staff-wanted',
+  'Apprentice butcher wanted — Ludlow, full-time',
+  'We''re looking for someone who wants to learn the trade properly. Early starts, cold rooms, and a lot of knife work. No experience needed but you have to actually want to be a butcher — we can tell the difference. Paid above apprentice minimum.',
+  'Ludlow',
+  'Drop into the shop or reply below'
+),
+(
+  '55555555-5555-5555-5555-555555555555',
+  'supplier-rec',
+  'Looking for a reliable UK sumac and za''atar supplier',
+  'Currently importing direct from Lebanon which is brilliant quality but the lead times are killing me. Anyone know a UK-based supplier doing proper Middle Eastern spices at wholesale? Not supermarket-grade stuff — the real thing.',
+  'Margate',
+  'DM or reply here'
+),
+(
+  '66666666-6666-6666-6666-666666666666',
+  'equipment-for-sale',
+  'Secondhand cheese wire cutter — £80, Bury St Edmunds',
+  'Upgraded to a new Boska so our old wire cutter needs a home. It''s a sturdy bench-mounted unit, works perfectly, just cosmetically scuffed. Would suit someone starting out. Collection only.',
+  'Bury St Edmunds',
+  'Reply below or visit the shop'
+);
+
 -- ---------- thread reactions ----------
 
 insert into public.thread_reactions (thread_id, author_id, type) values
