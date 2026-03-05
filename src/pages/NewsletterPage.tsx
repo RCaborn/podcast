@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useArticles } from '../hooks/useArticles'
 import { usePageTitle } from '../hooks/usePageTitle'
+import NewsletterSubscribePanel from '../components/newsletter/NewsletterSubscribePanel'
 import type { Article } from '../types/database'
 
 /* ------------------------------------------------------------------ */
@@ -62,6 +63,11 @@ export default function NewsletterPage() {
         </p>
         <div className="w-16 h-[2px] bg-terracotta mt-6" />
       </header>
+
+      {/* Subscribe panel */}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mb-12">
+        <NewsletterSubscribePanel />
+      </div>
 
       {/* Issue list */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

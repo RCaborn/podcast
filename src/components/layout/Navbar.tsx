@@ -66,12 +66,20 @@ export default function Navbar() {
               </Link>
             </>
           ) : (
-            <Link
-              to="/join"
-              className="inline-flex items-center justify-center font-ui font-bold uppercase text-sm tracking-[0.2em] bg-charcoal text-warm-white px-5 py-2 hover:bg-ink transition-colors"
-            >
-              Join
-            </Link>
+            <div className="flex items-center gap-4">
+              <Link
+                to="/subscribe"
+                className="font-ui text-[10px] uppercase tracking-[0.2em] text-slate/60 hover:text-slate transition-colors"
+              >
+                Newsletter &rarr;
+              </Link>
+              <Link
+                to="/join"
+                className="inline-flex items-center justify-center font-ui font-bold uppercase text-sm tracking-[0.2em] bg-charcoal text-warm-white px-5 py-2 hover:bg-ink transition-colors"
+              >
+                Join
+              </Link>
+            </div>
           )}
         </div>
 
@@ -144,13 +152,22 @@ export default function Navbar() {
               </span>
             </Link>
           ) : (
-            <Link
-              to="/join"
-              onClick={() => setMenuOpen(false)}
-              className="inline-flex items-center justify-center font-ui font-bold uppercase text-sm tracking-[0.2em] bg-charcoal text-warm-white px-5 py-3 hover:bg-ink transition-colors mt-2"
-            >
-              Join
-            </Link>
+            <>
+              <Link
+                to="/subscribe"
+                onClick={() => setMenuOpen(false)}
+                className={linkClass}
+              >
+                Subscribe to Newsletter
+              </Link>
+              <Link
+                to="/join"
+                onClick={() => setMenuOpen(false)}
+                className="inline-flex items-center justify-center font-ui font-bold uppercase text-sm tracking-[0.2em] bg-charcoal text-warm-white px-5 py-3 hover:bg-ink transition-colors mt-2"
+              >
+                Join
+              </Link>
+            </>
           )}
         </div>
       </div>

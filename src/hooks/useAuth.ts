@@ -19,7 +19,7 @@ export interface AuthState {
   user: User | null
   profile: Profile | null
   loading: boolean
-  signUp: (email: string, password: string, fullName: string, shopName?: string) => Promise<{ error: string | null }>
+  signUp: (email: string, password: string, fullName: string, shopName?: string, subscribeToNewsletter?: boolean) => Promise<{ error: string | null }>
   signIn: (email: string, password: string) => Promise<{ error: string | null }>
   signOut: () => Promise<void>
 }
@@ -65,7 +65,7 @@ export function useAuthProvider(): AuthState {
     return () => subscription.unsubscribe()
   }, [fetchProfile])
 
-  const signUp = useCallback(async (email: string, password: string, fullName: string, shopName?: string) => {
+  const signUp = useCallback(async (email: string, password: string, fullName: string, shopName?: string, subscribeToNewsletter?: boolean) => {
     const { data, error } = await supabase.auth.signUp({ email, password })
     if (error) return { error: error.message }
 
@@ -82,6 +82,18 @@ export function useAuthProvider(): AuthState {
     })
 
     if (profileErr) return { error: profileErr.message }
+
+    // Newsletter opt-in from the join flow
+    if (subscribeToNewsletter) {
+      await supabase.from('subscribers').insert({
+        email: email.toLowerCase().trim(),
+        source: 'join-flow',
+        consent_given: true,
+        consent_text:
+          'I agree to receive the Counter Culture weekly newsletter. Independent food retail news, community updates, and occasional relevant announcements. Unsubscribe any time.',
+      })
+      // Non-blocking — don't fail signup if newsletter insert fails
+    }
 
     await fetchProfile(userId)
     return { error: null }

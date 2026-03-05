@@ -9,6 +9,7 @@ import JoinPage from './pages/JoinPage'
 import LoginPage from './pages/LoginPage'
 import ProfilePage from './pages/ProfilePage'
 import DirectoryPage from './pages/DirectoryPage'
+import SubscribePage from './pages/SubscribePage'
 import NotFoundPage from './pages/NotFoundPage'
 
 export const router = createBrowserRouter([
@@ -25,6 +26,7 @@ export const router = createBrowserRouter([
       { path: '/login', element: <LoginPage /> },
       { path: '/profile/:userId', element: <ProfilePage /> },
       { path: '/directory', element: <DirectoryPage /> },
+      { path: '/subscribe', element: <SubscribePage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },

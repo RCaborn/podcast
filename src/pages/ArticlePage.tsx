@@ -3,6 +3,7 @@ import Markdown from 'react-markdown'
 import { useArticle, useArticles } from '../hooks/useArticles'
 import { usePageTitle } from '../hooks/usePageTitle'
 import Tag from '../components/ui/Tag'
+import ArticleSubscribeBanner from '../components/articles/ArticleSubscribeBanner'
 import type { Article } from '../types/database'
 
 /* ------------------------------------------------------------------ */
@@ -115,6 +116,9 @@ export default function ArticlePage() {
       <div className="mx-auto max-w-[680px] px-4 sm:px-6 mt-10 prose-article">
         <Markdown>{article.body ?? ''}</Markdown>
       </div>
+
+      {/* Subscribe banner */}
+      <ArticleSubscribeBanner />
 
       {/* Related articles */}
       {related.length > 0 && (

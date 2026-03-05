@@ -8,6 +8,7 @@ import { useThreads } from '../hooks/useThreads'
 import { useMemberDirectory } from '../hooks/useMemberDirectory'
 import { usePageTitle } from '../hooks/usePageTitle'
 import { mapAvatarColor } from '../lib/avatarColor'
+import SubscribeForm from '../components/ui/SubscribeForm'
 import type { Article, ThreadWithMeta } from '../types/database'
 
 /* ------------------------------------------------------------------ */
@@ -204,6 +205,19 @@ function NewsletterStrip({ article }: { article: Article }) {
         >
           Read this week&rsquo;s issue &rarr;
         </Link>
+
+        {/* Newsletter capture */}
+        <div className="border-t border-warm-white/10 mt-6 pt-6 max-w-[480px]">
+          <p className="font-ui text-[12px] font-semibold uppercase tracking-[0.2em] text-warm-white/60 mb-4">
+            Get it in your inbox.
+          </p>
+          <SubscribeForm
+            variant="inline"
+            dark={true}
+            source="homepage-strip"
+            showFirstName={false}
+          />
+        </div>
       </div>
     </section>
   )

@@ -17,6 +17,7 @@ export default function JoinPage() {
   const [shopName, setShopName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [newsletter, setNewsletter] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
@@ -25,7 +26,7 @@ export default function JoinPage() {
     setError(null)
     setSubmitting(true)
 
-    const { error: err } = await signUp(email, password, fullName, shopName || undefined)
+    const { error: err } = await signUp(email, password, fullName, shopName || undefined, newsletter)
     setSubmitting(false)
 
     if (err) {
@@ -104,6 +105,18 @@ export default function JoinPage() {
               className={inputClass}
             />
           </div>
+
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={newsletter}
+              onChange={(e) => setNewsletter(e.target.checked)}
+              className="mt-0.5 accent-terracotta"
+            />
+            <span className="font-body text-[13px] text-slate leading-relaxed">
+              Send me the Counter Culture Weekly newsletter
+            </span>
+          </label>
 
           {error && (
             <p className="font-body text-sm text-red-600">{error}</p>
