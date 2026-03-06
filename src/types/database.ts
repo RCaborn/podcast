@@ -17,6 +17,7 @@ export interface Profile {
   face_photo_url: string | null
   shop_photo_url: string | null
   shop_photo_caption: string | null
+  role: 'member' | 'admin'
   created_at: string
 }
 
