@@ -19,6 +19,7 @@ export interface AuthState {
   user: User | null
   profile: Profile | null
   loading: boolean
+  isAdmin: boolean
   signUp: (email: string, password: string, fullName: string, shopName?: string) => Promise<{ error: string | null }>
   signIn: (email: string, password: string) => Promise<{ error: string | null }>
   signOut: () => Promise<void>
@@ -99,5 +100,7 @@ export function useAuthProvider(): AuthState {
     setProfile(null)
   }, [])
 
-  return { user, profile, loading, signUp, signIn, signOut }
+  const isAdmin = profile?.role === 'admin'
+
+  return { user, profile, loading, isAdmin, signUp, signIn, signOut }
 }
