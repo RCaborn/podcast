@@ -73,7 +73,7 @@ function LeadStorySidebar({ lead, sidebar }: { lead: Article; sidebar: Article[]
             {lead.tag}
           </Eyebrow>
           <h2
-            className="font-display font-black mt-4 leading-[1.1] group-hover:text-sienna transition-colors"
+            className="font-display font-black text-ink mt-4 leading-[1.1] group-hover:text-sienna transition-colors"
             style={{ fontSize: 'clamp(30px, 4.2vw, 50px)' }}
           >
             {lead.title}
@@ -107,7 +107,7 @@ function LeadStorySidebar({ lead, sidebar }: { lead: Article; sidebar: Article[]
                 <Tag variant="filled" contentType={a.tag as any} className="text-[10px]">
                   {a.tag}
                 </Tag>
-                <h4 className="font-display font-bold text-sm mt-2 leading-snug group-hover:text-sienna transition-colors">
+                <h4 className="font-display font-bold text-ink text-sm mt-2 leading-snug group-hover:text-sienna transition-colors">
                   {a.title}
                 </h4>
                 <p className="font-ui text-[10px] uppercase tracking-wider text-slate mt-1">
@@ -218,17 +218,17 @@ function ArticleTrio({ articles }: { articles: Article[] }) {
 
   return (
     <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
-      <div className="grid grid-cols-1 md:grid-cols-3 divide-x divide-ink/6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-0 md:divide-x md:divide-ink/6">
         {articles.slice(0, 3).map((a) => (
           <Link
             key={a.id}
             to={articleHref(a)}
-            className="group block px-6 first:pl-0 last:pr-0"
+            className="group block md:px-6 md:first:pl-0 md:last:pr-0 border-b border-ink/6 pb-8 last:border-b-0 last:pb-0 md:border-b-0 md:pb-0"
           >
             <Tag variant="filled" contentType={a.tag as any} className="text-[10px]">
               {a.tag}
             </Tag>
-            <h3 className="font-display font-bold text-lg mt-3 leading-snug group-hover:text-sienna transition-colors">
+            <h3 className="font-display font-bold text-ink text-lg mt-3 leading-snug group-hover:text-sienna transition-colors">
               {a.title}
             </h3>
             {a.excerpt && (
@@ -403,7 +403,7 @@ function BottomArticleDuo({ articles }: { articles: Article[] }) {
             <Tag variant="filled" contentType={a.tag as any} className="text-[10px]">
               {a.tag}
             </Tag>
-            <h3 className="font-display font-bold text-xl mt-3 leading-snug group-hover:text-sienna transition-colors">
+            <h3 className="font-display font-bold text-ink text-xl mt-3 leading-snug group-hover:text-sienna transition-colors">
               {a.title}
             </h3>
             {a.excerpt && (
